@@ -1,7 +1,8 @@
 # UnZero - TF-A equivalent
 
 ## Overview
-**UnZero** - A project designed for **bare-metal programming on AArch64**, which allows for the addition of custom platforms and provides the ability to share your code with others.
+**UnZero** - A project designed for **bare-metal programming on AArch64**, which allows for the addition of custom platforms and provides the ability to share your code with others. \
+**The project is still under development! If you encounter a bug while using it, please report it! Thanks in advance!**
 
 
 ## Project goals:
