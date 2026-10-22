@@ -4,7 +4,8 @@
 
 typedef struct{
     volatile uint32_t CTLR;
-    uint32_t RESERVE_1[31];
+    volatile uint32_t TYPER;
+    uint32_t RESERVE_1[30];
     volatile uint32_t IGROUPER[32];
     volatile uint32_t ISENABLER[32];
     volatile uint32_t ICENABLER[32];

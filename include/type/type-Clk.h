@@ -46,9 +46,6 @@ typedef enum{
 }clk_cru_pll_seq_mode_rk3399_e;
 
 typedef struct{
-    void (*clk_conf_mux)(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info);
-    void (*clk_conf_gate)(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info);
-    void (*clk_conf_reset)(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info);
     void (*clk_handle)(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info);
     void (*clk_pll_handle)(uint64_t* cmd);
 }clk_hal_t;

@@ -11,8 +11,10 @@
 `[55:48]` - **Mode**: 
 1. h0 - **Res0**
 2. h1 - **Mux**
-3. h3 - **Gate**
-4. h4 - **Reset**
+3. h2 - **Mux 10-bit's(for rk platform)**
+4. h3 - **Gate**
+5. h4 - **Reset**
+6. `[55]` - **if 1 - PMU CRU. if 0 - CRU**
 
 ### UnZero CMD - Clk - CMD1
 **`[63:56][55:48][47:0]`** 
@@ -23,16 +25,34 @@
 1. h0 - **Res0 / Re-setting's pll engine**
 2. h1 - **Shutdown**
 
-### UnZero CMD - Clk - Mux - CMD
-`[63:56][55:48][47:35][34:32][31:0]`
+### UnZero CMD - Clk - Mux - CMD - 8-bit's mode
+`[63:56][55:48][47:44][43:32][31:0]`
 
 **Field:** \
 `[47:35]` - **Res0** \
-`[34:32]` - **Pll** \
+`[43:32]` - **Pll** \
 `[31:0]` - **Div** 
 
 **Div field:** \
 `[31:24][23:16][15:8][7:0]`
+
+**Pll field:** \
+`[43:41][40:38][37:35][34:32]`
+
+### UnZero CMD - Clk - Mux - CMD - 10-bit's mode
+`[63:56][55:48][47:38][37:32][32:24][23:0]`
+
+**Field:** \
+`[47:38]` - **Res0** \
+`[37:32]` - **Pll** \
+`[32:24]` - **Res0** \
+`[23:0]` - **Div** 
+
+**Div field:** \
+`[23:12][11:0]`
+
+**Pll field:** \
+`[37:35][34:32]`
 
 ### UnZero CMD - Clk - Mux - field info
 `[63:32][31:16][15:0]`
@@ -53,7 +73,7 @@
 
 **Field:** \
 `[63:40]` - **Res0** \
-`[39:32]` - **Iteration for one cmd(max 4)** \
+`[39:32]` - **Iteration for one cmd(max 4 in 8-bit's mode, or max 2 in 10-bit's mode. This notice for rk platform). Max 4** \
 `[31:0]` - **Target**
 
 **Target field:** \
@@ -167,8 +187,17 @@ For your implementation of **`clk`**, these fields may differ.
 `[63:32]` - **Res0** \
 `[31:0]` - **AFE**
 
-### UnZero CMD - GIC - ICC/GICR/GICD - CMD/Conf
+### UnZero CMD - GIC - ICC/GICR/GICD - CMD
 **`[63:56][55:48][47:0]`** 
+
+**Field:** \
+`[47:0]` - **Res0**
+
+### UnZero CMD - GIC - ICC/GICR/GICD - Conf
+**`[63:0]`** 
+
+**Field:** \
+`[63:0]` - **Conf**
 
 **Field:** \
 `[47:0]` - **Register conf**

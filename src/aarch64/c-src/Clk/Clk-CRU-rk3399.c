@@ -24,8 +24,11 @@ void clk_cru_handle_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_in
         case 4:
             clk_cru_conf_reset_rk3399(cmd, field_info, reg_info);
             break;
-        case 1:
-            clk_cru_conf_sel_rk3399(cmd, field_info, reg_info, mask_info);
+        case 2: //10-bit Div's
+            clk_cru_conf_sel_rk3399(cmd, field_info, reg_info, mask_info, 12U);
+            break;
+        case 1: //8-bit Div's
+            clk_cru_conf_sel_rk3399(cmd, field_info, reg_info, mask_info, 8U);
             break;
         default:
             break;
@@ -75,10 +78,10 @@ void clk_cru_pll_handle_rk3399(uint64_t* cmd){
     }
 }
 
-void clk_cru_conf_sel_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info){
+void clk_cru_conf_sel_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info, uint8_t div_mull){
     for(int index = 0; index < ((*reg_info >> 32) & 0xFF); index++){
-        uint16_t current_div = (*cmd >> (index * 8)) & 0xFF;
-        uint8_t current_pll = (*cmd >> 32) & 0x7; 
+        uint16_t current_div = (*cmd >> (index * div_mull)) & 0xFF;
+        uint8_t current_pll = (*cmd >> ((index * 3) + 32)) & 0x7; 
         uint8_t current_div_bit = (*field_info >> (index * 4)) & 0xF;
         uint8_t current_pll_bit = (*field_info >> ((index * 4) + 16)) & 0xF;
         uint16_t mask_div = (*mask_info >> (index * 12)) & 0xFFF;
@@ -296,9 +299,6 @@ void clk_cru_dpll_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
 }
 
 alignas(8) clk_hal_t CLK_HAL = {
-    .clk_conf_mux = &clk_cru_conf_sel_rk3399,
-    .clk_conf_gate = &clk_cru_conf_gate_rk3399,
-    .clk_conf_reset = &clk_cru_conf_reset_rk3399,
     .clk_handle = &clk_cru_handle_rk3399,
     .clk_pll_handle = &clk_cru_pll_handle_rk3399
 };
