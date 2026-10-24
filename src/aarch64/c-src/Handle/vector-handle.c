@@ -1,4 +1,18 @@
+#define PLATFORM 0
+
 #include<vector-handle.h>
+
+#include<type-UART.h>
+#include<GIC-GICv3.h>
+
+#if PLATFORM == 1
+
+#include<type-Clk.h>
+#include<type-PMU.h>
+
+#endif
+
+#include<ustd.h>
 
 void sync_el64th(){
     uprintf("[UnZero]CMD is now progress\r\n");
@@ -17,11 +31,15 @@ void sync_el64th(){
             __asm__("MOV %0, X12" : "=r"(reg_info));
             __asm__("MOV %0, X13" : "=r"(mask_info));
             uprintf("[UnZero]CMD for clk\r\n");
-            CLK_HAL.clk_handle(&cmd, &field_info, &reg_info, &mask_info);
+            #if PLATFORM == 1
+                CLK_HAL.clk_handle(&cmd, &field_info, &reg_info, &mask_info);
+            #endif
             break;
         case 1:
             uprintf("[UnZero]CMD for clk PLL\r\n");
-            CLK_HAL.clk_pll_handle(&cmd);
+            #if PLATFORM == 1
+                CLK_HAL.clk_pll_handle(&cmd);
+            #endif
             break;     
         case 2:
             __asm__("MOV %0, X11" : "=r"(afe));
@@ -31,7 +49,9 @@ void sync_el64th(){
             break;
         case 3:
             uprintf("[UnZero]CMD for pmu\r\n");
-            PMU_HAL.pmu_handle(&cmd);
+            #if PLATFORM == 1
+                PMU_HAL.pmu_handle(&cmd);
+            #endif
             break;
     }
 }
