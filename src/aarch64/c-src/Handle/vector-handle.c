@@ -1,7 +1,7 @@
 #include<vector-handle.h>
 
 void sync_el64th(){
-    uprintf("[UnZero] CMD is now progress\r\n");
+    uprintf("[UnZero]CMD is now progress\r\n");
     
     uint64_t cmd = 0x0;
     uint64_t field_info = 0x0;

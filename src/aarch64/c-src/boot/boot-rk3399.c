@@ -3,6 +3,7 @@
 #include<GIC-GICv3.h>
 #include<ustd.h>
 #include<UART165050A.h>
+#include<MMU.h>
 
 extern void jump();
 
@@ -10,6 +11,9 @@ void main(void){
     UART165050A_Synops = (uart_165050A_synops_t*)0xFF1A0000;
     uart165050A_init(0U, 1U);
     uprintf("[UnZero]UART2 on rk3399 in operation's\r\n");
+
+    mmu_conf_ips36_and_lower(BIT32, 0xC0000000, 4ULL);
+    uprintf("[UnZero]MMU on rk3399 in operation's\r\n");
 
     CRU = (clk_cru_rk3399_t*)0xFF760000;
     PMU = (pmu_pmu_rk3399_t*)0xFF310000;

@@ -16,6 +16,18 @@ typedef struct{
     volatile uint32_t USR;
 }uart_165050A_synops_t;
 
+typedef struct{
+    volatile uint32_t DR;
+    uint32_t RESERVE_1[5];
+    volatile uint32_t FR;
+    uint32_t RESERVE_2[2];
+    volatile uint32_t IBRD;
+    volatile uint32_t FBRD;
+    volatile uint32_t LCR_H;
+    volatile uint32_t CR;
+    volatile uint32_t IFLS;
+}uart_pl011_arm_t;
+
 typedef enum{
     DISABLE,
     ENABLE

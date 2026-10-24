@@ -10,12 +10,6 @@ boot:
     LDR X0, =EL3h_SP_bottom
     MOV SP, X0
 
-    MSR DAIFSet, #2
-
-    MRS X0, SCR_EL3
-    ORR X0, X0, #(1ULL << 1)
-    MSR SCR_EL3, X0
-
     B main
 
 .section .text
@@ -40,11 +34,12 @@ jump:
     MSR SP_EL2, X0
 
     LDR X0, =0x00200000
+    //LDR X0, =test
     MSR ELR_EL3, X0
 
     MOV X0, X10
     ERET
-
+    
 .section .bss
 .align 4
 EL3h_SP_top:

@@ -16,6 +16,7 @@
 3. Modifying **GIC** settings
 4. Performing initial **GIC** configuration
 5. Handling **SMC** requests
+6. **MMU** configure for EL3
 
 
 ## Supported platforms:
@@ -33,4 +34,4 @@
 The project is fully open to contributors! \
 **Welcome!**
 
-### Version project: 1.0
+### Version project: 2.0
