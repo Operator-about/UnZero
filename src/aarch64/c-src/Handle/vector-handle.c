@@ -1,4 +1,4 @@
-#define PLATFORM 0
+#define PLATFORM 1
 
 #include<vector-handle.h>
 

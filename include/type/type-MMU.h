@@ -14,9 +14,7 @@ typedef enum{
 }mmu_ps_e;
 
 typedef enum{
-    KB4,
-    KB64,
-    KB16
+    KB4
 }mmu_tg_t;
 
 typedef enum{
@@ -29,11 +27,3 @@ typedef enum{
     ATTR6,
     ATTR7
 }mmu_attr_index_e;
-
-typedef struct{
-    uint64_t MaxDesciprot;
-    uint64_t L1Plus;
-    uint64_t L2Plus;
-    uint64_t T0SZ;
-    mmu_tg_t TG;
-}mmu_data_about_table_t;

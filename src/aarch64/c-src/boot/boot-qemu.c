@@ -3,14 +3,14 @@
 #include<MMU.h>
 #include<ustd.h>
 
-extern void jump();
+extern void jump(uint64_t jump_point);
 
 void main(void){
     UARTPL011_ARM = (uart_pl011_arm_t*)0x09000000;
     uartpl011_init(13U, 1U);
 
     uprintf("[UnZero]Debug UART on QEMU in operation's\r\n");
-    mmu_conf_ips36_and_lower(BIT32, 0x00000000, 4ULL);
+    mmu_conf_ips40_and_higer(BIT40, 0x00000000, 2ULL);
     uprintf("[UnZero]MMU on QEMU in operation's\r\n");
 
     GICD = (gic_gicd_t*)0x08000000;
@@ -37,5 +37,6 @@ void main(void){
     gic_icc_ctlr_conf(&cmd_gic);
     uprintf("[UnZero]GICv3 on QEMU in operation's\r\n");
 
-    jump();
+    uprintf("[UnZero]Jump to next boot stage\r\n");
+    jump(0x42000000);
 }

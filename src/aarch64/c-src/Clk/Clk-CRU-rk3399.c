@@ -48,34 +48,7 @@ void clk_cru_pll_handle_rk3399(uint64_t* cmd){
             break;
     }
     
-    switch((*cmd >> 40) & 0xFF){
-        case 'G':
-            clk_cru_gpll_rk3399(cmd, mode);
-            break;
-        case 'L':
-            clk_cru_lpll_rk3399(cmd, mode);
-            break;
-        case 'P':
-            clk_cru_ppll_rk3399(cmd, mode);
-            break;
-        case 'B':
-            clk_cru_bpll_rk3399(cmd, mode);
-            break;
-        case 'C':
-            clk_cru_cpll_rk3399(cmd, mode);
-            break;
-        case 'D':
-            clk_cru_dpll_rk3399(cmd, mode);
-            break;
-        case 'V':
-            clk_cru_vpll_rk3399(cmd, mode);
-            break;
-        case 'N':
-            clk_cru_npll_rk3399(cmd, mode);
-            break;
-        default:
-            break;
-    }
+    clk_cru_pll_conf_rk3399(cmd, mode);
 }
 
 void clk_cru_conf_sel_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info, uint8_t div_mull){
@@ -130,170 +103,25 @@ void clk_cru_conf_reset_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* re
     }
 }
 
-void clk_cru_gpll_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
+void clk_cru_pll_conf_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
     uint16_t feedback = (*cmd & 0x7FF);
     uint8_t ref_div = (*cmd >> 28) & 0x3F;
     uint8_t post_div1 = (*cmd >> 34) & 0x7;
     uint8_t post_div2 = (*cmd >> 37) & 0x7;
+
+    clk_cru_pll_pattern_t* pll = (clk_cru_pll_pattern_t*)(0xFF760000 + ((*cmd >> 12) & 0xFF));
     switch(mode){
         case FULL:
-            CRU->GPLL[0] = (feedback << 0) | (0x7FFU << 16);
-            CRU->GPLL[1] = (ref_div << 0) | (post_div1 << 8) | (post_div2 << 12) | (0x3F << 16) | (0x7 << 24) | (0x7 << 28);
-            CRU->GPLL[3] = (0U << 0) | (1U << 8) | (0x1U << 16) | (0x3U << 24);
+            pll->PLL0 = (feedback << 0) | (0x7FFU << 16);
+            pll->PLL1 = (ref_div << 0) | (post_div1 << 8) | (post_div2 << 12) | (0x3F << 16) | (0x7 << 24) | (0x7 << 28);
+            pll->PLL3 = (0U << 0) | (1U << 8) | (0x1U << 16) | (0x3U << 24);
 
-            while((CRU->GPLL[2] & (1U << 31)) == 0){
+            while((pll->PLL2 & (1U << 31)) == 0){
                 __asm__("NOP");
             }
             break;
         case SHUTDOWN_ONLY:
-            CRU->GPLL[3] = (1U << 0) | (0x1U << 16);
-            break;
-    }
-}
-
-void clk_cru_bpll_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
-    uint16_t feedback = (*cmd & 0x7FF);
-    uint8_t ref_div = (*cmd >> 28) & 0x3F;
-    uint8_t post_div1 = (*cmd >> 34) & 0x7;
-    uint8_t post_div2 = (*cmd >> 37) & 0x7;
-    switch(mode){
-        case FULL:
-            CRU->BPLL[0] = (feedback << 0) | (0x7FFU << 16);
-            CRU->BPLL[1] = (ref_div << 0) | (post_div1 << 8) | (post_div2 << 12) | (0x3F << 16) | (0x7 << 24) | (0x7 << 28);
-            CRU->BPLL[3] = (0U << 0) | (1U << 8) | (0x1U << 16) | (0x3U << 24);
-
-            while((CRU->BPLL[2] & (1U << 31)) == 0){
-                __asm__("NOP");
-            }
-            break;
-        case SHUTDOWN_ONLY:
-            CRU->BPLL[3] = (1U << 0) | (0x1U << 16);
-            break;
-    }
-}
-
-void clk_cru_lpll_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
-    uint16_t feedback = (*cmd & 0x7FF);
-    uint8_t ref_div = (*cmd >> 28) & 0x3F;
-    uint8_t post_div1 = (*cmd >> 34) & 0x7;
-    uint8_t post_div2 = (*cmd >> 37) & 0x7;
-    switch(mode){
-        case FULL:
-            CRU->LPLL[0] = (feedback << 0) | (0x7FFU << 16);
-            CRU->LPLL[1] = (ref_div << 0) | (post_div1 << 8) | (post_div2 << 12) | (0x3F << 16) | (0x7 << 24) | (0x7 << 28);
-            CRU->LPLL[3] = (0U << 0) | (1U << 8) | (0x1U << 16) | (0x3U << 24);
-
-            while((CRU->LPLL[2] & (1U << 31)) == 0){
-                __asm__("NOP");
-            }
-            break;
-        case SHUTDOWN_ONLY:
-            CRU->LPLL[3] = (1U << 0) | (0x1U << 16);
-            break;
-    }
-}
-
-void clk_cru_ppll_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
-    uint16_t feedback = (*cmd & 0x7FF);
-    uint8_t ref_div = (*cmd >> 28) & 0x3F;
-    uint8_t post_div1 = (*cmd >> 34) & 0x7;
-    uint8_t post_div2 = (*cmd >> 37) & 0x7;
-    switch(mode){
-        case FULL:
-            PMU_CRU->PPLL[0] = (feedback << 0) | (0x7FFU << 16);
-            PMU_CRU->PPLL[1] = (ref_div << 0) | (post_div1 << 8) | (post_div2 << 12) | (0x3F << 16) | (0x7 << 24) | (0x7 << 28);
-            PMU_CRU->PPLL[3] = (0U << 0) | (1U << 8) | (0x1U << 16) | (0x3U << 24);
-
-            while((PMU_CRU->PPLL[2] & (1U << 31)) == 0){
-                __asm__("NOP");
-            }
-            break;
-        case SHUTDOWN_ONLY:
-            PMU_CRU->PPLL[3] = (1U << 0) | (0x1U << 16);
-            break;
-    }
-}
-
-void clk_cru_cpll_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
-    uint16_t feedback = (*cmd & 0x7FF);
-    uint8_t ref_div = (*cmd >> 28) & 0x3F;
-    uint8_t post_div1 = (*cmd >> 34) & 0x7;
-    uint8_t post_div2 = (*cmd >> 37) & 0x7;
-    switch(mode){
-        case FULL:
-            CRU->CPLL[0] = (feedback << 0) | (0x7FFU << 16);
-            CRU->CPLL[1] = (ref_div << 0) | (post_div1 << 8) | (post_div2 << 12) | (0x3F << 16) | (0x7 << 24) | (0x7 << 28);
-            CRU->CPLL[3] = (0U << 0) | (1U << 8) | (0x1U << 16) | (0x3U << 24);
-
-            while((CRU->CPLL[2] & (1U << 31)) == 0){
-                __asm__("NOP");
-            }
-            break;
-        case SHUTDOWN_ONLY:
-            CRU->CPLL[3] = (1U << 0) | (0x1U << 16);
-            break;
-    }
-}
-
-void clk_cru_vpll_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
-    uint16_t feedback = (*cmd & 0x7FF);
-    uint8_t ref_div = (*cmd >> 28) & 0x3F;
-    uint8_t post_div1 = (*cmd >> 34) & 0x7;
-    uint8_t post_div2 = (*cmd >> 37) & 0x7;
-    switch(mode){
-        case FULL:
-            CRU->VPLL[0] = (feedback << 0) | (0x7FFU << 16);
-            CRU->VPLL[1] = (ref_div << 0) | (post_div1 << 8) | (post_div2 << 12) | (0x3F << 16) | (0x7 << 24) | (0x7 << 28);
-            CRU->VPLL[3] = (0U << 0) | (1U << 8) | (0x1U << 16) | (0x3U << 24);
-
-            while((CRU->VPLL[2] & (1U << 31)) == 0){
-                __asm__("NOP");
-            }
-            break;
-        case SHUTDOWN_ONLY:
-            CRU->VPLL[3] = (1U << 0) | (0x1U << 16);
-            break;
-    }
-}
-
-void clk_cru_npll_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
-    uint16_t feedback = (*cmd & 0x7FF);
-    uint8_t ref_div = (*cmd >> 28) & 0x3F;
-    uint8_t post_div1 = (*cmd >> 34) & 0x7;
-    uint8_t post_div2 = (*cmd >> 37) & 0x7;
-    switch(mode){
-        case FULL:
-            CRU->NPLL[0] = (feedback << 0) | (0x7FFU << 16);
-            CRU->NPLL[1] = (ref_div << 0) | (post_div1 << 8) | (post_div2 << 12) | (0x3F << 16) | (0x7 << 24) | (0x7 << 28);
-            CRU->NPLL[3] = (0U << 0) | (1U << 8) | (0x1U << 16) | (0x3U << 24);
-
-            while((CRU->NPLL[2] & (1U << 31)) == 0){
-                __asm__("NOP");
-            }
-            break;
-        case SHUTDOWN_ONLY:
-            CRU->NPLL[3] = (1U << 0) | (0x1U << 16);
-            break;
-    }
-}
-
-void clk_cru_dpll_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode){
-    uint16_t feedback = (*cmd & 0x7FF);
-    uint8_t ref_div = (*cmd >> 28) & 0x3F;
-    uint8_t post_div1 = (*cmd >> 34) & 0x7;
-    uint8_t post_div2 = (*cmd >> 37) & 0x7;
-    switch(mode){
-        case FULL:
-            CRU->DPLL[0] = (feedback << 0) | (0x7FFU << 16);
-            CRU->DPLL[1] = (ref_div << 0) | (post_div1 << 8) | (post_div2 << 12) | (0x3F << 16) | (0x7 << 24) | (0x7 << 28);
-            CRU->DPLL[3] = (0U << 0) | (1U << 8) | (0x1U << 16) | (0x3U << 24);
-
-            while((CRU->DPLL[2] & (1U << 31)) == 0){
-                __asm__("NOP");
-            }
-            break;
-        case SHUTDOWN_ONLY:
-            CRU->DPLL[3] = (1U << 0) | (0x1U << 16);
+            pll->PLL3 = (1U << 0) | (0x1U << 16);
             break;
     }
 }

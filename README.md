@@ -11,8 +11,8 @@
 
 
 ## Firmware capabilities:
-1. Modifying **clk** blocks
-2. Modifying the **pmu** block (partially)
+1. Modifying **Clk** blocks
+2. Modifying the **PMU** block (partially)
 3. Modifying **GIC** settings
 4. Performing initial **GIC** configuration
 5. Handling **SMC** requests
@@ -21,13 +21,13 @@
 
 ## Supported platforms:
 1. **rk3399** - tests were conducted on a **Rock 4A**
-2. **QEMU** – planned for **v2.0**
+2. **QEMU** – support
 
 ## UnZero CMD – a new feature
 **UnZero CMD** - consists of commands that specify modifications to platform-specific peripherals. These commands are transmitted via the **SMC**, and registers **`X10–X14`** must be allocated for them. \
 **UnZero CMD supports:**
-1. **clk**
-2. **pmu**
+1. **Clk**
+2. **PMU**
 3. **GIC**
 
 ## Project status:

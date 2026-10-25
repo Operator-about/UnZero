@@ -1,4 +1,4 @@
 .vscode/*
 *.code-workspace
 *.o
-UnZero-rk3399.elf
+*.elf

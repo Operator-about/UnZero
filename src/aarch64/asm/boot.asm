@@ -17,6 +17,8 @@ boot:
 .global jump
 
 jump:
+    MOV X1, X0
+
     MOV X0, XZR
     MRS X0, SCR_EL3
     ORR X0, X0, #(1ULL << 10)
@@ -33,8 +35,7 @@ jump:
     LDR X0, =EL2h_SP_bottom
     MSR SP_EL2, X0
 
-    LDR X0, =0x00200000
-    //LDR X0, =test
+    MOV X0, X1
     MSR ELR_EL3, X0
 
     MOV X0, X10
