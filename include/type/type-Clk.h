@@ -35,6 +35,15 @@ typedef struct{
     volatile uint32_t CLKRESET_CON[2];
 }clk_pmucru_rk3399_t;
 
+typedef struct{
+    volatile uint32_t PLL0;
+    volatile uint32_t PLL1;
+    volatile uint32_t PLL2;
+    volatile uint32_t PLL3;
+    volatile uint32_t PLL4;
+    volatile uint32_t PLL5;
+}clk_cru_pll_pattern_t;
+
 typedef enum{
     BASECRU,
     PMUCRU

@@ -126,7 +126,7 @@ For your implementation of **`clk`**, these fields may differ.
 `[39:37]` - **Post div 2** \
 `[36:34]` - **Post div 1** \
 `[33:28]` - **Ref div** \
-`[27:12]` - **Res0** \
+`[27:12]` - **Offset pll register area** \
 `[11:0]` - **Feedback**
 
 ## UnZero CMD - PMU
@@ -198,6 +198,3 @@ For your implementation of **`clk`**, these fields may differ.
 
 **Field:** \
 `[63:0]` - **Conf**
-
-**Field:** \
-`[47:0]` - **Register conf**

@@ -30,9 +30,13 @@ vector_table:
         ERET
     .align 7
     Sync_elt64:
+        STP X29, X30, [SP, #-16]!
+
         BL sync_el64th
+
+        LDP X29, X30, [SP], #16
         
-        ERET //This!
+        ERET
     .align 7
     IRQ_elt64:
         ERET

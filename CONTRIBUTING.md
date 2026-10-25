@@ -6,7 +6,7 @@ All **local** variables must begin with a **lowercase letter** and must not cont
 `clk_div` \
 All **global** variables must begin with an **uppercase letter** and must be aligned to a **4-byte** or **8-byte** boundary: \
 `alignas(8) uint64_t Clk_HAL` \
-The function name should begin with the **general name** of the **hardware block** for example, **`clk`** (rather than `cru`) in the case of the **rk3399**. \
+The function name should begin with the **general name** of the **hardware block** for example, **`Clk`** (rather than `cru`) in the case of the **rk3399**. \
 Next, the **name** should include the **specific designation of the block as it appears within the platform**. This is followed by a description of the function's purpose. \
 And **finally unless** the component is a **GIC or a UART** the **name** of the **platform** should be appended: \
 Example on complete block: \
