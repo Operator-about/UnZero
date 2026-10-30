@@ -11,6 +11,9 @@ INC := -I./include/UART/UART-Standart -I./include/type/ -I./include/Clk/ -I./inc
 boot-asm.o: $(ASRC)boot.asm
 	$(AS) $(ASRC)boot.asm -o boot-asm.o
 
+switch.o: $(ASRC)switch.asm
+	$(AS) $^ -o $@
+
 boot-rk3399-c.o: $(CSRC)boot/boot-rk3399.c
 	$(CX) $(INC) -c $^ -o $@
 
@@ -46,10 +49,10 @@ mmu.o: $(CSRC)MMU/MMU.c
 
 rk3399: UnZero-rk3399.elf
 
-UnZero-rk3399.elf: boot-rk3399-c.o boot-asm.o uart.o clk-cru.o pmu-pmu.o mmu.o gic-gicv3.o table-handle.o lib-std.o vector-table-asm.o
+UnZero-rk3399.elf: boot-rk3399-c.o boot-asm.o uart.o clk-cru.o pmu-pmu.o mmu.o gic-gicv3.o table-handle.o switch.o lib-std.o vector-table-asm.o
 	$(CX) -nostdlib -T $(LINK)rk3399.ld $^ -o $@
 
 qemu: UnZero-QEMU.elf
 
-UnZero-QEMU.elf: boot-qemu-c.o boot-asm.o uartpl.o gic-gicv3.o table-handle.o mmu.o lib-std.o vector-table-asm.o
+UnZero-QEMU.elf: boot-qemu-c.o boot-asm.o uartpl.o gic-gicv3.o table-handle.o mmu.o switch.o lib-std.o vector-table-asm.o
 	$(CX) -nostdlib -T $(LINK)qemu-virt.ld $^ -o $@

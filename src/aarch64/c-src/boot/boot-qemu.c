@@ -3,7 +3,7 @@
 #include<MMU.h>
 #include<ustd.h>
 
-extern void jump(uint64_t jump_point);
+extern void jump_to_elxh(uint64_t jump_point, uint64_t ns, uint64_t el_dist);
 
 void main(void){
     UARTPL011_ARM = (uart_pl011_arm_t*)0x09000000;
@@ -38,5 +38,6 @@ void main(void){
     uprintf("[UnZero]GICv3 on QEMU in operation's\r\n");
 
     uprintf("[UnZero]Jump to next boot stage\r\n");
-    jump(0x42000000);
+
+    jump_to_elxh(0x42000000, (uint64_t)(9ULL << 0), (uint64_t)(1ULL << 0));
 }

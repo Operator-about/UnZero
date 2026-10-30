@@ -5,7 +5,8 @@
 #include<UART165050A.h>
 #include<MMU.h>
 
-extern void jump(uint64_t jump_point);
+
+extern void jump_to_elxh(uint64_t jump_point, uint64_t ns, uint64_t el_dist);
 
 void main(void){
     UART165050A_Synops = (uart_165050A_synops_t*)0xFF1A0000;
@@ -73,25 +74,21 @@ void main(void){
     reg_info = (2ULL << 32) | (33ULL << 8) | (22ULL << 0);
     clk_cru_conf_gate_rk3399(&cmd, &field_info, &reg_info);
 
-    if(GICD->TYPER != 0x0){
-        uprintf("[UnZero]New Clk to GIC-500 on rk3399 in operation's\r\n");
-    }
-
     uint64_t cmd_gic = 0x0;
     cmd_gic = (0x7ULL << 0) | (0x3ULL << 4);
     gic_gicd_ctlr_conf(&cmd_gic);
 
-    cmd_gic = (0ULL << 24);
+    cmd_gic = ((~0x7ULL) << 24);
     gic_gicr_ctlr_conf(&cmd_gic);
     gic_gicr_wakerw_conf();
 
-    cmd_gic = (0xF << 0);
+    cmd_gic = (0xFULL << 0);
     gic_icc_sre_conf(&cmd_gic);
 
-    cmd_gic = (0xFF << 0);
+    cmd_gic = (0xFFULL << 0);
     gic_icc_pmr_conf(&cmd_gic);
 
-    cmd_gic = (0x3 << 0);
+    cmd_gic = (0x3ULL << 0);
     gic_icc_igrpen1_conf(&cmd_gic);
 
     cmd_gic = (1ULL << 6);
@@ -100,5 +97,5 @@ void main(void){
 
     uprintf("[UnZero]Jump to next boot stage\r\n");
 
-    jump(0x00200000);
+    jump_to_elxh(0x02000000, (uint64_t)(9ULL << 0), (uint64_t)(1ULL << 0));
 }

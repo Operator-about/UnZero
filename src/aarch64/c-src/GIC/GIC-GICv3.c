@@ -4,7 +4,7 @@ gic_gicd_t* GICD;
 gic_gicr_t* GICR;
 
 void gic_irq_conf(uint64_t* cmd, uint64_t* afe){
-    uint8_t id = *cmd & 0xFFFF;
+    uint16_t id = *cmd & 0xFFFF;
     uint8_t priority = (*cmd >> 16) & 0xFF;
     
     GICD->IGROUPER[id / 32] &= ~(1U << (id % 32));
@@ -26,7 +26,7 @@ void gic_irq_conf(uint64_t* cmd, uint64_t* afe){
 }
 
 void gic_gicd_ctlr_conf(uint64_t* conf){
-    GICD->CTLR |= *conf & 0xFFFFFFFF;
+    GICD->CTLR = *conf & 0xFFFFFFFF;
 }
 
 void gic_gicr_ctlr_conf(uint64_t* conf){
