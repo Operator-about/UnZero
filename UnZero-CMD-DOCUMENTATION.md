@@ -198,3 +198,62 @@ For your implementation of **`clk`**, these fields may differ.
 
 **Field:** \
 `[63:0]` - **Conf**
+
+## UnZero CMD - SYSCON
+**CMD numbers: 4**. Reserve reg: **`X10-X11`**
+
+### UnZero CMD - SYSCON - CMD4
+**`[63:56][55:48][47:0]`** 
+
+**Field:**  
+`[63:56]` - **CMD** \
+`[55:48]` - **Mode**: 
+1. h0 - **Res0** \
+2. h1 - **SYSCON configure with mask** \
+3. h2 - **SYSCON configure without mask** \
+4. h3 - **PMU SYSCON configure with mask** \
+5. h4 - **PMU SYSCON configure without mask**
+
+### UnZero CMD - PMU/SYSCON - CMD - With Mask
+**`[63:48][47:42][41:34][33:32][31:0]`** 
+
+**Field:** \
+`[47:42]` - **Res0** \
+`[41:34]` - **Bit's** \
+`[33:32]` - **Count** \
+`[31:0]` - **Offset register's**
+
+**Offset register's field:** \
+`[31:16][15:0]`
+
+### UnZero CMD - PMU/SYSCON - CMD - Without Mask
+**`[63:48][47:42][41:34][33:32][31:0]`** 
+
+**Field:** \
+`[47:42]` - **Res0** \
+`[41:34]` - **Bit's** \
+`[33:32]` - **Res0** \
+`[31:0]` - **Offset register's**
+
+### UnZero CMD - PMU/SYSCON - Filed's info - With Mask
+**`[63:32][31:0]`** 
+
+**Field:** \
+`[63:32]` - **Mask** \
+`[31:0]` - **Value**
+
+**Value field:** \
+`[31:16][15:0]`
+
+**Mask field:** \
+`[63:48][47:32]`
+
+### UnZero CMD - PMU/SYSCON - Filed's info - Without Mask
+**`[63:32][31:0]`** 
+
+**Field:** \
+`[63:32]` - **Res0** \
+`[31:0]` - **Value**
+
+**Value field:** \
+`[31:16][15:0]`

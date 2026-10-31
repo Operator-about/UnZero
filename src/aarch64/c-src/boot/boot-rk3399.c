@@ -1,6 +1,7 @@
 #include<Clk-CRU-rk3399.h>
 #include<PMU-PMU-rk3399.h>
 #include<GIC-GICv3.h>
+#include<SysCon-GRF-rk3399.h>
 #include<ustd.h>
 #include<UART165050A.h>
 #include<MMU.h>
@@ -28,6 +29,13 @@ void main(void){
     clk_cru_pll_conf_rk3399(&cmd_gpll, FULL);
     uprintf("[UnZero]GPLL on rk3399 in operation's\r\n");
     
+    //UnZero CMD GRF test
+    // uint64_t grf_cmd = 0x0;
+    // uint64_t grf_conf = 0x0;
+    // grf_cmd = (2ULL << 34) | (1ULL << 32) | (0xE004ULL << 0);
+    // grf_conf = (0x1ULL << 32) | (1ULL << 0);
+    // syscon_grf_conf_rk3399(&grf_cmd, &grf_conf);
+
     uint64_t cmd = 0x0;
     uint64_t field_info = 0x0;
     uint64_t reg_info = 0x0;
