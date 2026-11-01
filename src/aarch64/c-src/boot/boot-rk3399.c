@@ -6,7 +6,6 @@
 #include<UART165050A.h>
 #include<MMU.h>
 
-
 extern void jump_to_elxh(uint64_t jump_point, uint64_t ns, uint64_t el_dist);
 
 void main(void){
@@ -32,9 +31,9 @@ void main(void){
     //UnZero CMD GRF test
     // uint64_t grf_cmd = 0x0;
     // uint64_t grf_conf = 0x0;
-    // grf_cmd = (2ULL << 34) | (1ULL << 32) | (0xE004ULL << 0);
-    // grf_conf = (0x1ULL << 32) | (1ULL << 0);
-    // syscon_grf_conf_rk3399(&grf_cmd, &grf_conf);
+    // grf_cmd = (8ULL << 38) | (6ULL << 34) | (2ULL << 32) | (0x0E028ULL << 16) | (0x0E028ULL << 0);
+    // grf_conf = (0x3ULL << 48) | (0x3ULL << 32) | ((~0x3ULL) << 16) | ((~0x3ULL) << 0);
+    // syscon_grf_with_mask_conf_rk3399(&grf_cmd, &grf_conf, BASEGRF);
 
     uint64_t cmd = 0x0;
     uint64_t field_info = 0x0;

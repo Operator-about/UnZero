@@ -9,6 +9,7 @@
 
 #include<type-Clk.h>
 #include<type-PMU.h>
+#include<type-SysCon.h>
 
 #endif
 
@@ -51,6 +52,13 @@ void sync_el64th(){
             uprintf("[UnZero]CMD for pmu\r\n");
             #if PLATFORM == 1
                 PMU_HAL.pmu_handle(&cmd);
+            #endif
+            break;
+        case 4:
+            __asm__("MOV %0, X11" : "=r"(conf));
+            uprintf("[UnZero]CMD for GRF\r\n");
+            #if PLATFORM == 1
+                Syscon_HAL.syscon_handle(&cmd, &conf);
             #endif
             break;
     }
