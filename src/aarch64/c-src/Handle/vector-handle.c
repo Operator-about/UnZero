@@ -15,6 +15,8 @@
 
 #include<ustd.h>
 
+extern void jump_to_elxh(uint64_t jump_point, uint64_t el_dist, uint64_t ns);
+
 void sync_el64th(){
     uprintf("[UnZero]CMD is now progress\r\n");
     
@@ -24,6 +26,7 @@ void sync_el64th(){
     uint64_t mask_info = 0x0;
     uint64_t afe = 0x0;
     uint64_t conf = 0x0;
+    uint64_t address = 0x0;
     __asm__("MOV %0, X10" : "=r"(cmd));
     
     switch((cmd >> 56) & 0xFF){
@@ -60,6 +63,11 @@ void sync_el64th(){
             #if PLATFORM == 1
                 Syscon_HAL.syscon_handle(&cmd, &conf);
             #endif
+            break;
+        case 5:
+            __asm__("MOV %0, X11" : "=r"(address));
+            uprintf("[UnZero]CMD for switch EL context\r\n");
+            jump_to_elxh(address, (uint64_t)(cmd & 0xF), (uint64_t)((cmd >> 4) & 0x1));
             break;
     }
 }

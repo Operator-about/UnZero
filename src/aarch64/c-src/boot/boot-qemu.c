@@ -3,7 +3,7 @@
 #include<MMU.h>
 #include<ustd.h>
 
-extern void jump_to_elxh(uint64_t jump_point, uint64_t ns, uint64_t el_dist);
+extern void jump_to_elxh(uint64_t jump_point, uint64_t el_dist, uint64_t ns);
 
 void main(void){
     UARTPL011_ARM = (uart_pl011_arm_t*)0x09000000;
@@ -39,5 +39,7 @@ void main(void){
 
     uprintf("[UnZero]Jump to next boot stage\r\n");
 
-    jump_to_elxh(0x42000000, (uint64_t)(9ULL << 0), (uint64_t)(1ULL << 0));
+    uint64_t cmd_el = 0x0;
+    cmd_el = (1ULL << 4) | (9ULL << 0);
+    jump_to_elxh(0x42000000, (uint64_t)(cmd_el & 0xF), (uint64_t)((cmd_el >> 4) & 0x1));
 }

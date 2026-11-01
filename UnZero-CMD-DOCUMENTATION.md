@@ -5,6 +5,7 @@
 2. [**UnZero CMD - PMU**](#unzero-cmd---pmu)
 3. [**UnZero CMD - GIC**](#unzero-cmd---gic)
 4. [**UnZero CMD - SysCon**](#unzero-cmd---syscon)
+5. [**UnZero CMD - EL switch**](#unzero-cmd---el-switch)
 
 ## UnZero CMD - Clk
 **CMD numbers: 0, 1**. Reserve reg: **`X10-X14`**
@@ -268,3 +269,23 @@ For your implementation of **`clk`**, these fields may differ.
 
 **Value field:** \
 `[63:32][31:0]`
+
+## UnZero CMD - EL Switch
+
+**CMD numbers: 5**. Reserve reg: **`X10-X11`**
+
+`X11` - **Dist address**
+
+### UnZero CMD - EL Switch - CMD5
+**`[63:56][55:0]`** 
+
+**Field:**  
+`[63:56]` - **CMD**
+
+### UnZero CMD - EL Switch - CMD
+**`[63:56][55:5][4][3:0]`** 
+
+**Field:**  
+`[55:5]` - **Res0** \
+`[4]` - **World configure** \
+`[3:0]` - **EL dist**

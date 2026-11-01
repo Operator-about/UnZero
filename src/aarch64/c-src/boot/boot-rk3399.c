@@ -104,5 +104,7 @@ void main(void){
 
     uprintf("[UnZero]Jump to next boot stage\r\n");
 
-    jump_to_elxh(0x02000000, (uint64_t)(9ULL << 0), (uint64_t)(1ULL << 0));
+    uint64_t cmd_el = 0x0;
+    cmd_el = (1ULL << 4) | (9ULL << 0);
+    jump_to_elxh(0x02000000, (uint64_t)(cmd_el & 0xF), (uint64_t)((cmd_el >> 4) & 0x1));
 }
