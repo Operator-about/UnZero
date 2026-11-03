@@ -27,6 +27,7 @@ void sync_el64th(){
     uint64_t afe = 0x0;
     uint64_t conf = 0x0;
     uint64_t address = 0x0;
+    uint64_t rcmd;
     __asm__("MOV %0, X10" : "=r"(cmd));
     
     switch((cmd >> 56) & 0xFF){
@@ -36,13 +37,13 @@ void sync_el64th(){
             __asm__("MOV %0, X13" : "=r"(mask_info));
             uprintf("[UnZero]CMD for clk\r\n");
             #if PLATFORM == 1
-                CLK_HAL.clk_handle(&cmd, &field_info, &reg_info, &mask_info);
+                CLK_HAL.clk_handle(&cmd, &field_info, &reg_info, &mask_info, &(unzero_rcmd_t){0});
             #endif
             break;
         case 1:
             uprintf("[UnZero]CMD for clk PLL\r\n");
             #if PLATFORM == 1
-                CLK_HAL.clk_pll_handle(&cmd);
+                CLK_HAL.clk_pll_handle(&cmd, &(unzero_rcmd_t){0});
             #endif
             break;     
         case 2:

@@ -6,7 +6,7 @@
 #include<UART165050A.h>
 #include<MMU.h>
 
-extern void jump_to_elxh(uint64_t jump_point, uint64_t ns, uint64_t el_dist);
+extern void jump_to_elxh(uint64_t jump_point, uint64_t el_dist, uint64_t ns);
 
 void main(void){
     UART165050A_Synops = (uart_165050A_synops_t*)0xFF1A0000;
@@ -52,7 +52,7 @@ void main(void){
     field_info = (8ULL << 20) | (15ULL << 16) | (0ULL << 4) | (0ULL << 0);
     reg_info = (2ULL << 32) | (35ULL << 8) | (33ULL << 0);
     mask_info = (0x3ULL << 51) | (0x1ULL << 48) | (0x7FULL << 12) | (0x0ULL << 0);
-    clk_cru_conf_sel_rk3399(&cmd, &field_info, &reg_info, &mask_info, 8U);
+    unzero_rcmd_t rcmd = clk_cru_conf_sel_rk3399(&cmd, &field_info, &reg_info, &mask_info, 8U);
 
     cmd = (3ULL << 48) | (0ULL << 0);
     field_info = (0x1ULL << 16) | (4ULL << 0);
@@ -103,6 +103,13 @@ void main(void){
     uprintf("[UnZero]GIC-500 on rk3399 in operation's\r\n");
 
     uprintf("[UnZero]Jump to next boot stage\r\n");
+
+    uprintf("[UnZero]RCMD short:");
+    uprint8f(rcmd.ShortResponse);
+    uprintf("[UnZero]RCMD syndrom:");
+    uprint8f(rcmd.Syndrome);
+    uprintf("[UnZero]RCMD syncdrom cause:");
+    uprint8f(rcmd.CauseSyndrome);
 
     uint64_t cmd_el = 0x0;
     cmd_el = (1ULL << 4) | (9ULL << 0);
