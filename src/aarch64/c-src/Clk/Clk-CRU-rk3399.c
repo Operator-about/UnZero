@@ -53,6 +53,7 @@ void clk_cru_pll_handle_rk3399(uint64_t* cmd, unzero_rcmd_t* rcmd){
 
 unzero_rcmd_t clk_cru_conf_sel_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info, uint8_t div_mull){
     unzero_rcmd_t response = {0};
+    response.Status = SUCCESS;
 
     uint8_t itteration = ((*reg_info >> 32) & 0xFF);
     unzero_rcmd_itteration_check(&response, 4U, &itteration);
