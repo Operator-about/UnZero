@@ -289,3 +289,42 @@ For your implementation of **`clk`**, these fields may differ.
 `[55:5]` - **Res0** \
 `[4]` - **World configure** \
 `[3:0]` - **EL dist**
+
+## UnZero RCMD
+**CMD numbers: -**. Reserve reg: **`X10`**
+
+### UnZero RCMD - CMD
+`[63:28][27:20][19:12][11:4][3:0]`
+
+**Field:** \
+`[63:28]` - **Res0** \
+`[27:20]` - **From:**
+1. 0x01 - **Clk**
+2. 0x02 - **SYSCON**
+3. 0x03 - **PMU**
+4. 0x04 - **GIC**
+5. 0xAA - **From table-vector. If `[19:12]` = 0xBB**
+6. 0xFF - **From table-vector. If Unknow error** 
+
+`[19:12]` - **Cause Syndrome:**
+1. 0x00 - **Success**
+2. 0x11 - **Invalid value**
+3. 0x31 - **Over max itteration**
+4. 0x32 - **Invalid bit's**
+5. 0x41 - **Warning close to over max value**
+6. 0x42 - **Warning potentially invalid value**
+7. 0xBB - **Unsupport operation**
+8. 0xFF - **Unknow reasone**
+
+`[11:4]` - **Syndrome:**
+1. 0x00 - **Success**
+2. 0x01 - **Success with warning**
+3. 0x11 - **Error in beginning operation**
+4. 0xAA - **Unsupport for this platform**
+5. 0xFF - **Error in operation**
+
+`[3:0]` - **Short reasone:**
+1. h0 - **Success**
+2. h1 - **Success with warning**
+3. h2 - **Error**
+4. h3 - **Unknow error. All field's in Res0**

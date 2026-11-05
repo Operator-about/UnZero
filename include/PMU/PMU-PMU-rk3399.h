@@ -2,6 +2,7 @@
 
 #include<Type-PMU.h>
 #include<Clk-CRU-rk3399.h>
+#include<UnZero-RCMD.h>
 
 extern pmu_pmu_rk3399_t* PMU;
 

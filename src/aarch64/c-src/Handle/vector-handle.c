@@ -62,7 +62,7 @@ void sync_el64th(){
             __asm__("MOV %0, X11" : "=r"(conf));
             uprintf("[UnZero]CMD for GRF\r\n");
             #if PLATFORM == 1
-                Syscon_HAL.syscon_handle(&cmd, &conf);
+                Syscon_HAL.syscon_handle(&cmd, &conf, &(unzero_rcmd_t){0});
             #endif
             break;
         case 5:

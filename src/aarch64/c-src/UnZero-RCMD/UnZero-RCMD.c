@@ -22,7 +22,7 @@ void unzero_rcmd_offset_check(unzero_rcmd_t* rcmd, uint32_t max_addess, uint16_t
 }
 
 void unzero_rcmd_itteration_check(unzero_rcmd_t* rcmd, uint8_t max_itteration, uint8_t* src){
-    if(*src > max_itteration){
+    if(*src >= max_itteration){
         *rcmd = (unzero_rcmd_t){.ShortResponse = 2U, .CauseSyndrome = 0x31U, .Status = ERROR};
     }
 }
