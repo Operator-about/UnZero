@@ -17,6 +17,9 @@
 4. Performing initial **GIC** configuration
 5. Handling **SMC** requests
 6. **MMU** configure for EL3
+7. **EL** switch
+8. Modifying **SYSCON** settings
+9. Send response CMD: **UnZero-RCMD**
 
 
 ## Supported platforms:
@@ -29,9 +32,11 @@
 1. **Clk**
 2. **PMU**
 3. **GIC**
+4. **SYSCON**
+5. **EL switch**
 
 ## Project status:
 The project is fully open to contributors! \
 **Welcome!**
 
-### Version project: 2.0
+### Version project: 3.0

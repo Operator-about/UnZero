@@ -6,6 +6,7 @@
 3. [**UnZero CMD - GIC**](#unzero-cmd---gic)
 4. [**UnZero CMD - SysCon**](#unzero-cmd---syscon)
 5. [**UnZero CMD - EL switch**](#unzero-cmd---el-switch)
+6. [**UnZero CMD - RCMD**](#unzero-rcmd)
 
 ## UnZero CMD - Clk
 **CMD numbers: 0, 1**. Reserve reg: **`X10-X14`**
@@ -301,10 +302,9 @@ For your implementation of **`clk`**, these fields may differ.
 `[27:20]` - **From:**
 1. 0x01 - **Clk**
 2. 0x02 - **SYSCON**
-3. 0x03 - **PMU**
-4. 0x04 - **GIC**
-5. 0xAA - **From table-vector. If `[19:12]` = 0xBB**
-6. 0xFF - **From table-vector. If Unknow error** 
+3. 0x03 - **GIC**
+4. 0xAA - **From table-vector. If `[19:12]` = 0xBB**
+5. 0xFF - **From table-vector. If Unknow error** 
 
 `[19:12]` - **Cause Syndrome:**
 1. 0x00 - **Success**

@@ -28,8 +28,7 @@ void sync_el64th(){
     uint64_t afe = 0x0;
     uint64_t conf = 0x0;
     uint64_t address = 0x0;
-    uint64_t rcmd_out;
-    unzero_rcmd_t rcmd;
+    unzero_rcmd_t rcmd = {0};
     __asm__("MOV %0, X10" : "=r"(cmd));
     
     switch((cmd >> 56) & 0xFF){
@@ -70,7 +69,7 @@ void sync_el64th(){
             __asm__("MOV %0, X11" : "=r"(afe));
             __asm__("MOV %0, X12" : "=r"(conf));
             uprintf("[UnZero]CMD for gic\r\n");
-            gic_handle(&cmd, &afe, &conf);
+            gic_handle(&cmd, &afe, &conf, &rcmd);
             break;
         case 3:
             uprintf("[UnZero]CMD for pmu\r\n");

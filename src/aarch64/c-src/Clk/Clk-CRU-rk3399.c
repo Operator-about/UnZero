@@ -51,6 +51,10 @@ void clk_cru_pll_handle_rk3399(uint64_t* cmd, unzero_rcmd_t* rcmd){
             mode = SHUTDOWN_ONLY;
             break;
         default:
+            rcmd->From = 0x01U;
+            rcmd->ShortResponse = 0x02U;
+            rcmd->CauseSyndrome = 0xBBU;
+            rcmd->Syndrome = 0x11U;
             break;
     }
     

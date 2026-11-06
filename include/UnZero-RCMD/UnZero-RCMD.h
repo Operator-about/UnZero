@@ -2,10 +2,6 @@
 
 #include<type-Other.h>
 
-#define UZRCMD_CHECKF(syndrome, from, Response) switch(Response->Status) \
-    {case ERROR: \
-        Response->Syndrome = syndrome; Response->From = from;}
-
 #define UZRCMD_CHECKF_VALUE(RCMD, FROM, POINT, MAX_VALUE, WAR_VALUE, SRC_VALUE) switch(SRC_VALUE) \
     {case WAR_VALUE ... MAX_VALUE: \
         RCMD->Syndrome = POINT; RCMD->CauseSyndrome = 0x11U; RCMD->From = FROM; RCMD->ShortResponse = 0x02U; return;}
