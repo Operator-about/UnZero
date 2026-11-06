@@ -28,18 +28,19 @@ void main(void){
     clk_cru_pll_conf_rk3399(&cmd_gpll, FULL, &(unzero_rcmd_t){0});
     uprintf("[UnZero]GPLL on rk3399 in operation's\r\n");
     
+    unzero_rcmd_t rcmd = {0};
     //UnZero CMD GRF test
     // uint64_t grf_cmd = 0x0;
     // uint64_t grf_conf = 0x0;
     // grf_cmd = (8ULL << 38) | (6ULL << 34) | (2ULL << 32) | (0x0E028ULL << 16) | (0x0E028ULL << 0);
     // grf_conf = (0x3ULL << 48) | (0x3ULL << 32) | ((~0x3ULL) << 16) | ((~0x3ULL) << 0);
-    // syscon_grf_with_mask_conf_rk3399(&grf_cmd, &grf_conf, BASEGRF);
+    // syscon_grf_with_mask_conf_rk3399(&grf_cmd, &grf_conf, BASEGRF, &rcmd);
 
     uint64_t cmd = 0x0;
     uint64_t field_info = 0x0;
     uint64_t reg_info = 0x0;
     uint64_t mask_info = 0x0;
-    unzero_rcmd_t rcmd = {0};
+    
 
     Mode = BASECRU;
 
@@ -49,11 +50,11 @@ void main(void){
     reg_info = (1ULL << 32) | (9ULL << 0);
     clk_cru_conf_gate_rk3399(&cmd, &field_info, &reg_info, &(unzero_rcmd_t){0});
 
-    cmd = (1ULL << 48) | (0ULL << 35) | (1ULL << 32) | (24ULL << 8) | (255ULL << 0);
+    cmd = (1ULL << 48) | (0ULL << 35) | (1ULL << 32) | (24ULL << 8) | (0ULL << 0);
     field_info = (8ULL << 20) | (15ULL << 16) | (0ULL << 4) | (0ULL << 0);
-    reg_info = (4ULL << 32) | (35ULL << 8) | (33ULL << 0);
+    reg_info = (2ULL << 32) | (35ULL << 8) | (33ULL << 0);
     mask_info = (0x3ULL << 51) | (0x1ULL << 48) | (0x7FULL << 12) | (0x0ULL << 0);
-    clk_cru_conf_sel_rk3399(&cmd, &field_info, &reg_info, &mask_info, 8U, &rcmd);
+    clk_cru_conf_sel_rk3399(&cmd, &field_info, &reg_info, &mask_info, 8U, &(unzero_rcmd_t){0});
 
     cmd = (3ULL << 48) | (0ULL << 0);
     field_info = (0x1ULL << 16) | (4ULL << 0);
@@ -102,15 +103,6 @@ void main(void){
     cmd_gic = (1ULL << 6);
     gic_icc_ctlr_conf(&cmd_gic);
     uprintf("[UnZero]GIC-500 on rk3399 in operation's\r\n");
-
-    uprintf("[UnZero]RCMD From:0x");
-    uprint8f(rcmd.From);
-    uprintf("\r\n[UnZero]RCMD Syndrom:0x");
-    uprint8f(rcmd.Syndrome);
-    uprintf("\r\n[UnZero]RCMD Cause syndrom:0x");
-    uprint8f(rcmd.CauseSyndrome);
-    uprintf("\r\n[UnZero]RCMD Short response:0x");
-    uprint8f(rcmd.ShortResponse);
 
     uprintf("[UnZero]Jump to next boot stage\r\n");
 

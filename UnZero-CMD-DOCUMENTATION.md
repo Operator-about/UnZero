@@ -133,7 +133,7 @@ For your implementation of **`clk`**, these fields may differ.
 `[39:37]` - **Post div 2** \
 `[36:34]` - **Post div 1** \
 `[33:28]` - **Ref div** \
-`[27:12]` - **Offset pll register area** \
+`[27:12]` - **Offset address** \
 `[11:0]` - **Feedback**
 
 ## UnZero CMD - PMU
@@ -313,8 +313,9 @@ For your implementation of **`clk`**, these fields may differ.
 4. 0x32 - **Invalid bit's**
 5. 0x41 - **Warning close to over max value**
 6. 0x42 - **Warning potentially invalid value**
-7. 0xBB - **Unsupport operation**
-8. 0xFF - **Unknow reasone**
+7. 0xAA - **Offset invalid**
+8. 0xBB - **Unsupport operation**
+9. 0xFF - **Unknow reasone**
 
 `[11:4]` - **Syndrome:**
 1. 0x00 - **Success**

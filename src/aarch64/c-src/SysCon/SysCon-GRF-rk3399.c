@@ -15,65 +15,63 @@ void syscon_grf_handle_rk3399(uint64_t* cmd, uint64_t* conf, unzero_rcmd_t* rcmd
             syscon_grf_without_mask_conf_rk3399(cmd, conf, PMUGRF, rcmd);
             break;
         default:
+            rcmd->From = 0x02U;
+            rcmd->ShortResponse = 0x02U;
+            rcmd->CauseSyndrome = 0xBBU;
+            rcmd->Syndrome = 0x11U;
             break;
     }
+
+    rcmd->From = 0x02U;
 }
 
 void syscon_grf_with_mask_conf_rk3399(uint64_t* cmd, uint64_t* conf, syscon_mode_e mode, unzero_rcmd_t* rcmd){
     uint8_t itteration = ((*cmd >> 32) & 0x3);
-    unzero_rcmd_itteration_check(rcmd, 2U, &itteration);
-    UZRCMD_CHECKF(0x11U, 0x02U, rcmd);
+    UZRCMD_CHECKF_ITERATION(rcmd, 0x02U, 0x11U, 0U, 2U, itteration);
     
     for(int itteration = 0; itteration < ((*cmd >> 32) & 0x3); itteration++){
         uint8_t conf_bit = (*cmd >> ((4 * itteration) + 34)) & 0xF;
-        unzero_rcmd_bit_check(rcmd,  15U, &conf_bit);
 
         uint16_t offset = (*cmd >> (16 * itteration)) & 0xFFFF;
         uint16_t mask = (*conf >> ((16 * itteration) + 32)) & 0xFFFF;
         uint16_t value = (*conf >> (16 * itteration)) & 0xFFFF;
 
-        UZRCMD_CHECKF(0xFFU, 0x02U, rcmd);
-
         volatile uint32_t* GRF;
         switch(mode){
             case BASEGRF:
-                unzero_rcmd_offset_check(rcmd, 0xF7A0U, &offset);
+                UZRCMD_CHECKF_OFFSET(rcmd, 0x02U, 0xFFU, 0x0000U, 0xF7A0U, offset);
                 GRF = (volatile uint32_t*)(0xFF770000 + offset);
                 break;
             case PMUGRF:
-                unzero_rcmd_offset_check(rcmd, 0x30CU, &offset);
+                UZRCMD_CHECKF_OFFSET(rcmd, 0x02U, 0xFFU, 0x0000U, 0x30CU, offset);
                 GRF = (volatile uint32_t*)(0xFF320000 + offset);
         }   
-        UZRCMD_CHECKF(0xFFU, 0x02U, rcmd);
+
         *GRF = (value << conf_bit) | (mask << (conf_bit + 16));
     }
 }
 
 void syscon_grf_without_mask_conf_rk3399(uint64_t* cmd, uint64_t* conf, syscon_mode_e mode, unzero_rcmd_t* rcmd){
     uint8_t itteration = ((*cmd >> 32) & 0x3);
-    unzero_rcmd_itteration_check(rcmd, 2U, &itteration);
-    UZRCMD_CHECKF(0x11U, 0x02U, rcmd);
+    UZRCMD_CHECKF_ITERATION(rcmd, 0x02U, 0x11U, 0U, 2U, itteration);
     
     for(int itteration = 0; itteration < ((*cmd >> 32) & 0x3); itteration++){
         uint8_t conf_bit = (*cmd >> ((6 * itteration) + 34)) & 0x3F;
-        unzero_rcmd_bit_check(rcmd, 31U, &conf_bit);
-
         uint16_t offset = (*cmd >> (16 * itteration)) & 0xFFFF;
         uint32_t value = (*conf >> (32 * itteration)) & 0xFFFFFFFF;
 
-        UZRCMD_CHECKF(0xFFU, 0x02U, rcmd);
 
         volatile uint32_t* GRF;
         switch(mode){
             case BASEGRF:
-                unzero_rcmd_offset_check(rcmd, 0xF7A0U, &offset);
+                UZRCMD_CHECKF_OFFSET(rcmd, 0x02U, 0xFFU, 0x0000U, 0xF7A0U, offset);
                 GRF = (volatile uint32_t*)(0xFF770000 + offset);
                 break;
             case PMUGRF:
-                unzero_rcmd_offset_check(rcmd, 0x30CU, &offset);
+                UZRCMD_CHECKF_OFFSET(rcmd, 0x02U, 0xFFU, 0x0000U, 0x30CU, offset);
                 GRF = (volatile uint32_t*)(0xFF320000 + offset);
-        }    
-        UZRCMD_CHECKF(0xFFU, 0x02U, rcmd);
+        }  
+
         *GRF = (value << conf_bit);
     }
 }

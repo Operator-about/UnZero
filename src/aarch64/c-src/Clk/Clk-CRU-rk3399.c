@@ -31,8 +31,14 @@ void clk_cru_handle_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_in
             clk_cru_conf_sel_rk3399(cmd, field_info, reg_info, mask_info, 8U, rcmd);
             break;
         default:
+            rcmd->From = 0x01U;
+            rcmd->ShortResponse = 0x02U;
+            rcmd->CauseSyndrome = 0xBBU;
+            rcmd->Syndrome = 0x11U;
             break;
     }
+
+    rcmd->From = 0x01U;
 }
 
 void clk_cru_pll_handle_rk3399(uint64_t* cmd, unzero_rcmd_t* rcmd){
@@ -49,36 +55,32 @@ void clk_cru_pll_handle_rk3399(uint64_t* cmd, unzero_rcmd_t* rcmd){
     }
     
     clk_cru_pll_conf_rk3399(cmd, mode, rcmd);
+    rcmd->From = 0x01U;
 }
 
 void clk_cru_conf_sel_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info, uint8_t div_mull, unzero_rcmd_t* rcmd){
     uint8_t itteration = ((*reg_info >> 32) & 0xFF);
-    unzero_rcmd_itteration_check(rcmd, 4U, &itteration);
-    UZRCMD_CHECKF(0x11U, 0x01U, rcmd);
+    UZRCMD_CHECKF_ITERATION(rcmd, 0x01U, 0x11U, 0U, 4U, itteration);
 
     for(int index = 0; index < itteration; index++){
         uint16_t current_div;
         switch(div_mull){
             case 8:
                 current_div = (*cmd >> (index * div_mull)) & 0xFF;
-                unzero_rcmd_value_check(rcmd, 254U, 240U, &current_div);
                 break;
             case 12:
                 current_div = (*cmd >> (index * div_mull)) & 0xFFF;
-                unzero_rcmd_value_check(rcmd, 1023U, 255U, &current_div);
                 break;
         }
+        UZRCMD_CHECKF_VALUE(rcmd, 0x01U, 0xFFU, 1024U, 250U, current_div);
 
         uint8_t current_pll = (*cmd >> ((index * 3) + 32)) & 0x7; 
+
         uint8_t current_div_bit = (*field_info >> (index * 4)) & 0xF;
         uint8_t current_pll_bit = (*field_info >> ((index * 4) + 16)) & 0xF;
-        unzero_rcmd_bit_check(rcmd, 15U, &current_div_bit);
-        unzero_rcmd_bit_check(rcmd, 15U, &current_pll_bit);
 
         uint16_t mask_div = (*mask_info >> (index * 12)) & 0xFFF;
         uint8_t mask_pll = (*mask_info >> ((index * 3) + 48)) & 0x7;
-        
-        UZRCMD_CHECKF(0xFFU, 0x01U, rcmd);
 
         switch(Mode){
             case BASECRU:
@@ -92,16 +94,13 @@ void clk_cru_conf_sel_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_
 
 void clk_cru_conf_gate_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, unzero_rcmd_t* rcmd){
     uint8_t itteration = ((*reg_info >> 32) & 0xFF);
-    unzero_rcmd_itteration_check(rcmd, 4U, &itteration);
-    UZRCMD_CHECKF(0x11U, 0x01U, rcmd);
+    UZRCMD_CHECKF_ITERATION(rcmd, 0x01U, 0x11U, 0U, 4U, itteration);
     
     for(int index = 0; index < itteration; index++){
         uint16_t current_gate = (*cmd >> (8 * index)) & 0xFF;
         uint8_t current_gate_bit = (*field_info >> (4 * index)) & 0xF;
-        unzero_rcmd_bit_check(rcmd, 15U, &current_gate_bit);
         uint16_t mask_gate = (*field_info >> ((8 * index) + 16) & 0xFF);
 
-        UZRCMD_CHECKF(0xFFU, 0x01U, rcmd);
         
         switch(Mode){
             case BASECRU:
@@ -116,16 +115,12 @@ void clk_cru_conf_gate_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg
 
 void clk_cru_conf_reset_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, unzero_rcmd_t* rcmd){
     uint8_t itteration = ((*reg_info >> 32) & 0xFF);
-    unzero_rcmd_itteration_check(rcmd, 4U, &itteration);
-    UZRCMD_CHECKF(0x11U, 0x01U, rcmd);
+    UZRCMD_CHECKF_ITERATION(rcmd, 0x01U, 0x11U, 0U, 4U, itteration);
     
     for(int index = 0; index < ((*reg_info >> 32) & 0xFF); index++){
         uint16_t current_reset = (*cmd >> (8 * index)) & 0xFF;
         uint8_t current_reset_bit = (*field_info >> (4 * index)) & 0xF;
-        unzero_rcmd_bit_check(rcmd, 15U, &current_reset_bit);
         uint16_t mask_reset = (*field_info >> ((8 * index) + 16) & 0xFF);
-
-        UZRCMD_CHECKF(0xFFU, 0x01U, rcmd);
         
         switch(Mode){
             case BASECRU:
@@ -145,14 +140,13 @@ void clk_cru_pll_conf_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode, 
     uint8_t post_div2 = (*cmd >> 37) & 0x7;
     clk_cru_pll_pattern_t* pll = (clk_cru_pll_pattern_t*)(0xFF760000 + ((*cmd >> 12) & 0xFF));
 
-    unzero_rcmd_value_check(rcmd, 3201U, 3100U, &feedback);
-    unzero_rcmd_value_check(rcmd, 64U, 60U, (uint16_t*)&ref_div);
-    unzero_rcmd_value_check(rcmd, 8U, 6U, (uint16_t*)&post_div1);
-    unzero_rcmd_value_check(rcmd, 8U, 6U, (uint16_t*)&post_div2);
-    unzero_rcmd_offset_check(rcmd, 0x00D4, &offset);
+    UZRCMD_CHECKF_VALUE(rcmd, 0x01U, 0xFFU, 3201U, 3100U, feedback);
+    UZRCMD_CHECKF_VALUE(rcmd, 0x01U, 0xFFU, 64U, 60U, ref_div);
+    UZRCMD_CHECKF_VALUE(rcmd, 0x01U, 0xFFU, 8U, 6U, post_div1);
+    UZRCMD_CHECKF_VALUE(rcmd, 0x01U, 0xFFU, 8U, 6U, post_div2);
+    UZRCMD_CHECKF_OFFSET(rcmd, 0x01U, 0xFFU, 0x0000U, 0x00D4U, offset);
     offset = 0x0;
 
-    UZRCMD_CHECKF(0x11U, 0x01U, rcmd);
     
     switch(mode){
         case FULL:
