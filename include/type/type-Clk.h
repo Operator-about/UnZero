@@ -2,6 +2,8 @@
 
 #include<stdint.h>
 #include<stdalign.h>
+#include<type-Other.h>
+#include<UnZero-RCMD.h>
 
 typedef struct{
     volatile uint32_t LPLL[6];
@@ -55,8 +57,8 @@ typedef enum{
 }clk_cru_pll_seq_mode_rk3399_e;
 
 typedef struct{
-    void (*clk_handle)(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info);
-    void (*clk_pll_handle)(uint64_t* cmd);
+    void (*clk_handle)(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info, unzero_rcmd_t* rcmd);
+    void (*clk_pll_handle)(uint64_t* cmd, unzero_rcmd_t* rcmd);
 }clk_hal_t;
 
 extern alignas(8) clk_hal_t CLK_HAL;

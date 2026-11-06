@@ -1,5 +1,13 @@
 # UnZero CMD - Description
 
+## Content
+1. [**UnZero CMD - Clk**](#unzero-cmd---clk)
+2. [**UnZero CMD - PMU**](#unzero-cmd---pmu)
+3. [**UnZero CMD - GIC**](#unzero-cmd---gic)
+4. [**UnZero CMD - SysCon**](#unzero-cmd---syscon)
+5. [**UnZero CMD - EL switch**](#unzero-cmd---el-switch)
+6. [**UnZero CMD - RCMD**](#unzero-rcmd)
+
 ## UnZero CMD - Clk
 **CMD numbers: 0, 1**. Reserve reg: **`X10-X14`**
 
@@ -126,7 +134,7 @@ For your implementation of **`clk`**, these fields may differ.
 `[39:37]` - **Post div 2** \
 `[36:34]` - **Post div 1** \
 `[33:28]` - **Ref div** \
-`[27:12]` - **Offset pll register area** \
+`[27:12]` - **Offset address** \
 `[11:0]` - **Feedback**
 
 ## UnZero CMD - PMU
@@ -198,3 +206,126 @@ For your implementation of **`clk`**, these fields may differ.
 
 **Field:** \
 `[63:0]` - **Conf**
+
+## UnZero CMD - SYSCON
+**CMD numbers: 4**. Reserve reg: **`X10-X11`**
+
+### UnZero CMD - SYSCON - CMD4
+**`[63:56][55:48][47:0]`** 
+
+**Field:**  
+`[63:56]` - **CMD** \
+`[55:48]` - **Mode**: 
+1. h0 - **Res0** 
+2. h1 - **SYSCON configure with mask** 
+3. h2 - **SYSCON configure without mask** 
+4. h3 - **PMU SYSCON configure with mask** 
+5. h4 - **PMU SYSCON configure without mask**
+
+### UnZero CMD - PMU/SYSCON - CMD - With Mask
+**`[63:48][47:42][41:34][33:32][31:0]`** 
+
+**Field:** \
+`[47:42]` - **Res0** \
+`[41:34]` - **Bit's** \
+`[33:32]` - **Count** \
+`[31:0]` - **Offset register's**
+
+**Offset register's field:** \
+`[31:16][15:0]`
+
+### UnZero CMD - PMU/SYSCON - CMD - Without Mask
+**`[63:48][47:46][45:34][33:32][31:0]`** 
+
+**Field:** \
+`[47:46]` - **Res0** \
+`[45:34]` - **Bit's** \
+`[33:32]` - **Count** \
+`[31:0]` - **Offset register's**
+
+**Offset register's field:** \
+`[31:16][15:0]`
+
+**Bit's field:** \
+`[45:40][39:34]`
+
+### UnZero CMD - PMU/SYSCON - Filed's info - With Mask
+**`[63:32][31:0]`** 
+
+**Field:** \
+`[63:32]` - **Mask** \
+`[31:0]` - **Value**
+
+**Value field:** \
+`[31:16][15:0]`
+
+**Mask field:** \
+`[63:48][47:32]`
+
+### UnZero CMD - PMU/SYSCON - Filed's info - Without Mask
+**`[63:0]`** 
+
+**Field:** \
+`[63:0]` - **Value**
+
+**Value field:** \
+`[63:32][31:0]`
+
+## UnZero CMD - EL Switch
+
+**CMD numbers: 5**. Reserve reg: **`X10-X11`**
+
+`X11` - **Dist address**
+
+### UnZero CMD - EL Switch - CMD5
+**`[63:56][55:0]`** 
+
+**Field:**  
+`[63:56]` - **CMD**
+
+### UnZero CMD - EL Switch - CMD
+**`[63:56][55:5][4][3:0]`** 
+
+**Field:**  
+`[55:5]` - **Res0** \
+`[4]` - **World configure** \
+`[3:0]` - **EL dist**
+
+## UnZero RCMD
+**CMD numbers: -**. Reserve reg: **`X10`**
+
+### UnZero RCMD - CMD
+`[63:28][27:20][19:12][11:4][3:0]`
+
+**Field:** \
+`[63:28]` - **Res0** \
+`[27:20]` - **From:**
+1. 0x01 - **Clk**
+2. 0x02 - **SYSCON**
+3. 0x03 - **GIC**
+4. 0xAA - **From table-vector. If `[19:12]` = 0xBB**
+5. 0xFF - **From table-vector. If Unknow error** 
+
+`[19:12]` - **Cause Syndrome:**
+1. 0x00 - **Success**
+2. 0x11 - **Invalid value**
+3. 0x31 - **Over max itteration**
+4. 0x32 - **Invalid bit's**
+5. 0x41 - **Warning close to over max value**
+6. 0x42 - **Warning potentially invalid value**
+7. 0xAA - **Offset invalid**
+8. 0xBB - **Unsupport operation**
+9. 0xFF - **Unknow reasone**
+
+`[11:4]` - **Syndrome:**
+1. 0x00 - **Success**
+2. 0x01 - **Success with warning**
+3. 0x11 - **Error in beginning operation**
+4. 0xAA - **Unsupport for this platform**
+5. 0xFF - **Error in operation**
+
+`[3:0]` - **Short reasone:**
+1. h0 - **Success**
+2. h1 - **Success with warning**
+3. h2 - **Error**
+4. h3 - **Unknow error. All field's in Res0**

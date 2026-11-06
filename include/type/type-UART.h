@@ -26,6 +26,7 @@ typedef struct{
     volatile uint32_t LCR_H;
     volatile uint32_t CR;
     volatile uint32_t IFLS;
+    volatile uint32_t IMSC;
 }uart_pl011_arm_t;
 
 typedef enum{

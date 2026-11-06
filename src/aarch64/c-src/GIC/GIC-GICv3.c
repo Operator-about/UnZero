@@ -3,9 +3,8 @@
 gic_gicd_t* GICD;
 gic_gicr_t* GICR;
 
-void gic_irq_conf(uint64_t* cmd, uint64_t* afe){
-    uint8_t id = *cmd & 0xFFFF;
-    uint8_t priority = (*cmd >> 16) & 0xFF;
+void gic_irq_conf(uint64_t* cmd, uint64_t* afe, unzero_rcmd_t* rcmd){
+    uint16_t id = *cmd & 0xFFFF;
     
     GICD->IGROUPER[id / 32] &= ~(1U << (id % 32));
     GICD->IGROUPER[id / 32] |= (((*cmd >> 26) & 0x1) << (id % 32));
@@ -13,6 +12,7 @@ void gic_irq_conf(uint64_t* cmd, uint64_t* afe){
     GICD->IGRPMODR[id / 32] &= ~(1U << (id % 32));
     GICD->IGRPMODR[id / 32] |= (((*cmd >> 27) & 0x1) << (id % 32));
 
+    UZRCMD_CHECKF_VALUE(rcmd, 0x03U, 0xFFU, 3U, 3U, ((*cmd >> 24) & 0x3));
     GICD->ICFGR[id / 16] &= ~(3U << ((id % 16) * 2));
     GICD->ICFGR[id / 16] |= (((*cmd >> 24) & 0x3) << ((id % 16) * 2));
 
@@ -26,7 +26,7 @@ void gic_irq_conf(uint64_t* cmd, uint64_t* afe){
 }
 
 void gic_gicd_ctlr_conf(uint64_t* conf){
-    GICD->CTLR |= *conf & 0xFFFFFFFF;
+    GICD->CTLR = *conf & 0xFFFFFFFF;
 }
 
 void gic_gicr_ctlr_conf(uint64_t* conf){
@@ -48,25 +48,29 @@ void gic_gicr_wakers_conf(){
 }
 
 void gic_icc_ctlr_conf(uint64_t* conf){
+    *conf &= 0x7FFFF;
     __asm__("MSR ICC_CTLR_EL3, %0" : :"r"(*conf));
 }
 
 void gic_icc_igrpen1_conf(uint64_t* conf){
+    *conf &= 0x3ULL;
     __asm__("MSR ICC_IGRPEN1_EL3, %0" : :"r"(*conf));
 }
 
 void gic_icc_sre_conf(uint64_t* conf){
+    *conf &= 0xFULL;
     __asm__("MSR ICC_SRE_EL3, %0" : :"r"(*conf));
 }
 
 void gic_icc_pmr_conf(uint64_t* conf){
+    *conf &= 0xFFULL;
     __asm__("MSR ICC_PMR_EL1, %0" : :"r"(*conf));
 }
 
-void gic_handle(uint64_t* cmd, uint64_t* afe, uint64_t* conf){
+void gic_handle(uint64_t* cmd, uint64_t* afe, uint64_t* conf, unzero_rcmd_t* rcmd){
     switch((*cmd >> 48) & 0xFF){
         case 1:
-            gic_irq_conf(cmd, afe);
+            gic_irq_conf(cmd, afe, rcmd);
             break;
         case 2:
             gic_icc_sre_conf(conf);
