@@ -14,8 +14,8 @@ typedef struct{
 }pmu_pmu_rk3399_t;
 
 typedef enum{
-    STARTUP,
-    SHUTDOWN
+    PWRDD,
+    PWRDE
 }pmu_mode_e;
 
 typedef struct{
