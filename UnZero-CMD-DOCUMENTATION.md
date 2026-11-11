@@ -6,10 +6,12 @@
     1.2 [**UnZero CMD - Clk - Mux - CMD**](#unzero-cmd---clk---mux---cmd) \
     1.3 [**UnZero CMD - Clk - Mux - field info**](#unzero-cmd---clk---mux---field-info) \
     1.4 [**UnZero CMD - Clk - Mux - Mask info**](#unzero-cmd---clk---mux---mask-info) \
-    1.5 [**UnZero CMD - Clk - Mux/Gate/Reset - Register info**](#unzero-cmd---clk---muxgatereset---reg-info) \
+    1.5 [**UnZero CMD - Clk - Mux/Gate/Reset/Other - Register info**](#unzero-cmd---clk---muxgateresetother---reg-info) \
     1.6 [**UnZero CMD - Clk - Gate/Reset - CMD**](#unzero-cmd---clk---gatereset---cmd) \
     1.7 [**UnZero CMD - Clk - Gate/Reset - field info**](#unzero-cmd---clk---gatereset---field-info) \
-    1.8 [**UnZero CMD - Clk - CMD1**](#unzero-cmd---clk---cmd1)
+    1.8 [**UnZero CMD - Clk - Other - CMD**](#unzero-cmd---clk---other---cmd) \
+    1.9 [**UnZero CMD - Clk - Other - field info**](#unzero-cmd---clk---other---field-info) \
+    1.10 [**UnZero CMD - Clk - CMD1**](#unzero-cmd---clk---cmd1)
 2. [**UnZero CMD - PMU**](#unzero-cmd---pmu)
 3. [**UnZero CMD - GIC**](#unzero-cmd---gic)
 4. [**UnZero CMD - SysCon**](#unzero-cmd---syscon)
@@ -26,9 +28,22 @@
 `[63:56]` - **CMD** \
 `[55:48]` - **Mode**: 
 1. h0 - **Res0**
-2. h1 - **Mux**
-3. h2 - **Gate**
-4. h3 - **Reset**
+2. h1 - **Mux with mask. Base clk**
+3. h2 - **Gate with mask. Base clk**
+4. h3 - **Reset with mask. Base clk**
+5. h4 - **Mux with mask. PMU clk if support**
+6. h5 - **Gate with mask. PMU clk if support**
+7. h6 - **Reset with mask. PMU clk if support**
+8. h7 - **Mux without mask. Base clk**
+9. h8 - **Gate without mask. Base clk**
+10. h9 - **Reset without mask. Base clk**
+11. hA - **Mux without mask. PMU clk if support**
+12. hB - **Gate without mask. PMU clk if support**
+13. hC - **Reset without mask. PMU clk if support**
+14. hD - **Configure other clk register with mask. Base clk**
+15. hE - **Configure other clk register with mask. PMU clk if support**
+16. hF - **Configure other clk register without mask. Base clk**
+17. h10 - **Configure other clk register without mask. PMU clk if support**
 
 ### UnZero CMD - Clk - CMD1
 **`[63:56][55:48][47:0]`** 
@@ -36,8 +51,15 @@
 **Field:**  
 `[63:56]` - **CMD** \
 `[55:48]` - **Mode**: 
-1. h0 - **Res0 / Re-setting's pll engine**
-2. h1 - **Shutdown**
+1. h0 - **Res0**
+2. h1 - **Reset pll engine with mask. Base clk**
+3. h2 - **Shutdown with mask. Base clk**
+4. h3 - **Reset pll engine with mask. PMU clk if support**
+5. h4 - **Shutdown with mask. PMU clk if support**
+6. h5 - **Reset pll engine without mask. Base clk**
+7. h6 - **Shutdown without mask. Base clk**
+8. h7 - **Reset pll engine without mask. PMU clk if support**
+9. h8 - **Shutdown without mask. PMU clk if support**
 
 ### UnZero CMD - Clk - Mux - CMD
 `[63:56][55:48][47:44][43:32][31:0]`
@@ -73,7 +95,7 @@
 **Pll bit's field:** \
 `[31:28][27:24][23:20][19:16]`
 
-### UnZero CMD - Clk - Mux/Gate/Reset - reg info
+### UnZero CMD - Clk - Mux/Gate/Reset/Other - reg info
 `[63:56][55:48][47:0]`
 
 **Field:** \
@@ -122,6 +144,29 @@
 **Gate/Reset bit's field:** \
 `[15:12][11:8][7:4][3:0]`
 
+### UnZero CMD - Clk - Other - CMD
+`[63:56][55:48][47:32][31:0]`
+
+**Field:** \
+`[47:32]` - **Res0** \
+`[31:0]` - **Value. Max 2** 
+
+**Value field:**
+`[31:16][15:0]`
+
+### UnZero CMD - Clk - Other - field info
+`[63:40][39:8][7:0]`
+
+**Field:** \
+`[63:40]` - **Res0** \
+`[39:8]` - **Other mask** \
+`[7:0]` - **Other bit's**
+
+**Other bit's field:** \
+`[7:4][3:0]`
+
+**Other mask field:** \
+`[39:24][23:8]`
 
 ### UnZero CMD - Clk - Pll - CMD
 `[63:56][55:48][47:40][39:37][36:34][33:28][27:12][11:0]` \

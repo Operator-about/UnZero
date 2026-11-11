@@ -1,35 +1,33 @@
 #include<Clk-CRU-rk3399.h>
 #include<ustd.h>
 
-clk_pmucru_rk3399_t* PMU_CRU;
-clk_cru_rk3399_t* CRU;
 clk_cru_mode_rk3399_t Mode;
 
 void clk_cru_handle_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info, unzero_rcmd_t* rcmd){
-    switch((*cmd >> 55) & 0x1){
-        case 1:
+    switch((*cmd >> 48) & 0xFF){
+        case 14:
             Mode = PMUCRU;
+            clk_cru_conf_other_register(cmd, field_info, reg_info, rcmd);
             break;
-        case 0:
+        case 13:
             Mode = BASECRU;
+            clk_cru_conf_other_register(cmd, field_info, reg_info, rcmd);
             break;
-        default:
-            Mode = BASECRU;
-            break;
-    }
-
-    switch((*cmd >> 48) & 0x7F){
-        case 3:
+        case 5 ... 6:
+            Mode = PMUCRU;
             clk_cru_conf_gate_reset_rk3399(cmd, field_info, reg_info, rcmd);
             break;
         case 4:
+            Mode = PMUCRU;
+            clk_cru_conf_sel_rk3399(cmd, field_info, reg_info, mask_info, rcmd);
+            break;
+        case 2 ... 3:
+            Mode = BASECRU;
             clk_cru_conf_gate_reset_rk3399(cmd, field_info, reg_info, rcmd);
             break;
-        case 2: //10-bit Div's
-            clk_cru_conf_sel_rk3399(cmd, field_info, reg_info, mask_info, 12U, rcmd);
-            break;
-        case 1: //8-bit Div's
-            clk_cru_conf_sel_rk3399(cmd, field_info, reg_info, mask_info, 8U, rcmd);
+        case 1:
+            Mode = BASECRU;
+            clk_cru_conf_sel_rk3399(cmd, field_info, reg_info, mask_info, rcmd);
             break;
         default:
             rcmd->From = 0x01U;
@@ -43,13 +41,23 @@ void clk_cru_handle_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_in
 }
 
 void clk_cru_pll_handle_rk3399(uint64_t* cmd, unzero_rcmd_t* rcmd){
-    clk_cru_pll_seq_mode_rk3399_e mode = FULL;
+    clk_cru_pll_seq_mode_rk3399_e mode_pll_protocol = FULL;
     switch((*cmd >> 48) & 0xFF){
-        case 0:
-            mode = FULL;
-            break;
         case 1:
-            mode = SHUTDOWN_ONLY;
+            mode_pll_protocol = FULL;
+            Mode = BASECRU;
+            break;
+        case 2:
+            mode_pll_protocol = SHUTDOWN_ONLY;
+            Mode = BASECRU;
+            break;
+        case 3:
+            mode_pll_protocol = FULL;
+            Mode = PMUCRU;
+            break;
+        case 4:
+            mode_pll_protocol = SHUTDOWN_ONLY;
+            Mode = PMUCRU;
             break;
         default:
             rcmd->From = 0x01U;
@@ -59,12 +67,12 @@ void clk_cru_pll_handle_rk3399(uint64_t* cmd, unzero_rcmd_t* rcmd){
             break;
     }
     
-    clk_cru_pll_conf_rk3399(cmd, mode, rcmd);
+    clk_cru_pll_conf_rk3399(cmd, mode_pll_protocol, rcmd);
     rcmd->From = 0x01U;
 }
 
 
-void clk_cru_conf_sel_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info, uint8_t div_mull, unzero_rcmd_t* rcmd){
+void clk_cru_conf_sel_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, uint64_t* mask_info, unzero_rcmd_t* rcmd){
     uint8_t itteration = ((*reg_info >> 48) & 0xFF);
     UZRCMD_CHECKF_ITERATION(rcmd, 0x01U, 0x11U, 0U, 4U, itteration);
 
@@ -107,7 +115,7 @@ void clk_cru_conf_sel_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_
 
 void clk_cru_conf_gate_reset_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, unzero_rcmd_t* rcmd){
     uint8_t itteration = ((*reg_info >> 48) & 0xFF);
-    //UZRCMD_CHECKF_ITERATION(rcmd, 0x01U, 0x11U, 0U, 4U, itteration);
+    UZRCMD_CHECKF_ITERATION(rcmd, 0x01U, 0x11U, 0U, 4U, itteration);
     
     uint16_t mask_gate, current_gate, current_offset = 0x0;
     uint8_t current_gate_bit = 0x0;
@@ -138,13 +146,55 @@ void clk_cru_conf_gate_reset_rk3399(uint64_t* cmd, uint64_t* field_info, uint64_
     }
 }
 
+void clk_cru_conf_other_register(uint64_t* cmd, uint64_t* field_info, uint64_t* reg_info, unzero_rcmd_t* rcmd){
+    uint8_t itteration = ((*reg_info >> 48) & 0x3);
+    UZRCMD_CHECKF_ITERATION(rcmd, 0x01U, 0x11U, 0U, 2U, itteration);
+    
+    uint16_t mask_other, current_other, current_offset = 0x0;
+    uint8_t current_other_bit = 0x0;
+    volatile uint32_t* SEL = 0x0;
+    volatile uint32_t orig = 0x0;
+    switch(Mode){
+        case BASECRU:
+            SEL = (volatile uint32_t*)0xFF760000;
+            orig = 0xFF760000;
+            break;
+        case PMUCRU:
+            SEL = (volatile uint32_t*)0xFF750000;
+            orig = 0xFF750000;
+            break;
+    }
+
+    for(int index = 0; index < itteration; index++){
+        current_other = (*cmd >> (16 * index)) & 0xFFFF;
+        current_other_bit = (*field_info >> (4 * index)) & 0xF;
+        mask_other = (*field_info >> ((16 * index) + 8) & 0xFFFF);
+
+        current_offset = (*reg_info >> (index * 12)) & 0xFFF;
+        SEL = (volatile uint32_t*)((volatile uint32_t)SEL + current_offset);
+
+        *SEL = (current_other << current_other_bit) | (mask_other << (current_other_bit + 16));
+        
+        SEL = (volatile uint32_t*)orig;
+    }
+}
+
 void clk_cru_pll_conf_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode, unzero_rcmd_t* rcmd){
     uint16_t feedback = (*cmd & 0x7FF);
     uint16_t offset = ((*cmd >> 12) & 0xFF);
     uint8_t ref_div = (*cmd >> 28) & 0x3F;
     uint8_t post_div1 = (*cmd >> 34) & 0x7;
     uint8_t post_div2 = (*cmd >> 37) & 0x7;
-    clk_cru_pll_pattern_t* pll = (clk_cru_pll_pattern_t*)(0xFF760000 + ((*cmd >> 12) & 0xFF));
+    
+    clk_cru_pll_pattern_t* pll;
+    switch(Mode){
+        case BASECRU:
+            pll = (clk_cru_pll_pattern_t*)(0xFF760000 + ((*cmd >> 12) & 0xFF));
+            break;
+        case PMUCRU:
+            pll = (clk_cru_pll_pattern_t*)(0xFF750000 + ((*cmd >> 12) & 0xFF));
+            break;
+    }
 
     UZRCMD_CHECKF_VALUE(rcmd, 0x01U, 0xFFU, 3201U, 3100U, feedback);
     UZRCMD_CHECKF_VALUE(rcmd, 0x01U, 0xFFU, 64U, 60U, ref_div);
@@ -153,7 +203,6 @@ void clk_cru_pll_conf_rk3399(uint64_t* cmd, clk_cru_pll_seq_mode_rk3399_e mode, 
     UZRCMD_CHECKF_OFFSET(rcmd, 0x01U, 0xFFU, 0x0000U, 0x00D4U, offset);
     offset = 0x0;
 
-    
     switch(mode){
         case FULL:
             pll->PLL0 = (feedback << 0) | (0x7FFU << 16);

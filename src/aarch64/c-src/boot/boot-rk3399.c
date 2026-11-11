@@ -16,12 +16,12 @@ void main(void){
     mmu_conf_ips36_and_lower(BIT32, 0xC0000000, 4ULL);
     uprintf("[UnZero]MMU on rk3399 in operation's\r\n");
 
-    CRU = (clk_cru_rk3399_t*)0xFF760000;
     PMU = (pmu_pmu_rk3399_t*)0xFF310000;
-    PMU_CRU = (clk_pmucru_rk3399_t*)0xFF750000;
 
     GICD = (gic_gicd_t*)0xFEE00000;
     GICR = (gic_gicr_t*)0xFEF00000;
+
+    Mode = BASECRU;
 
     uint64_t cmd_gpll = 0x0;
     cmd_gpll = (1ULL << 56) | (0ULL << 48) | (0x47ULL << 40) | (1ULL << 37) | (1ULL << 34) | (4ULL << 28) | (0x0080ULL << 12) | (99ULL << 0);
@@ -40,11 +40,6 @@ void main(void){
     uint64_t field_info = 0x0;
     uint64_t reg_info = 0x0;
     uint64_t mask_info = 0x0;
-    
-
-    Mode = BASECRU;
-
-    uprint32f(CRU->CLKSEL_CON[35]);
 
     //UART Synops
     cmd = (3ULL << 48) | (1ULL << 0);
@@ -56,7 +51,7 @@ void main(void){
     field_info = (7ULL << 36) | (0ULL << 32) | (8ULL << 20) | (15ULL << 16) | (0ULL << 4) | (0ULL << 0);
     reg_info = (2ULL << 48) | (0x18CULL << 12) | (0x184ULL << 0);
     mask_info = (0x3ULL << 51) | (0x1ULL << 48) | (0x7FULL << 12) | (0x0ULL << 0);
-    clk_cru_conf_sel_rk3399(&cmd, &field_info, &reg_info, &mask_info, 8U, &(unzero_rcmd_t){0});
+    clk_cru_conf_sel_rk3399(&cmd, &field_info, &reg_info, &mask_info, &(unzero_rcmd_t){0});
 
     cmd = (3ULL << 48) | (0ULL << 0);
     field_info = (0x1ULL << 16) | (4ULL << 0);
@@ -67,7 +62,6 @@ void main(void){
     uprintf("[UnZero]New Clk to UART2 on rk3399 in operation's\r\n");
     uprintf("[UnZero]re-init UART2 on rk3399 in done\r\n");
     uprintf("[UnZero]UART2 on rk3399 in operation's\r\n");
-    uprint32f(CRU->CLKSEL_CON[35]);
     
     //GIC-500
     cmd = (0x3FULL << 8) | (1ULL << 0);
@@ -79,7 +73,7 @@ void main(void){
     field_info = (5ULL << 32) | (15ULL << 16) | (8ULL << 0);
     reg_info = (1ULL << 48) | (0x1E0ULL << 0);
     mask_info = (0x1ULL << 48) | (0x1FULL << 0);
-    clk_cru_conf_sel_rk3399(&cmd, &field_info, &reg_info, &mask_info, 8U, &(unzero_rcmd_t){0});
+    clk_cru_conf_sel_rk3399(&cmd, &field_info, &reg_info, &mask_info, &(unzero_rcmd_t){0});
 
     cmd = (0ULL << 8) | (0ULL << 0);
     field_info = (0x3FULL << 24) | (0x1ULL << 16) | (0ULL << 4) | (12ULL << 0);
