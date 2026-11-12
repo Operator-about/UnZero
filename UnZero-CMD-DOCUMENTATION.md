@@ -12,7 +12,10 @@
     1.8 [**UnZero CMD - Clk - Other - CMD**](#unzero-cmd---clk---other---cmd) \
     1.9 [**UnZero CMD - Clk - Other - field info**](#unzero-cmd---clk---other---field-info) \
     1.10 [**UnZero CMD - Clk - CMD1**](#unzero-cmd---clk---cmd1)
-2. [**UnZero CMD - PMU**](#unzero-cmd---pmu)
+2. [**UnZero CMD - PMU**](#unzero-cmd---pmu) \
+    2.1 [**UnZero CMD - PMU - CMD2**](#unzero-cmd---pmu---cmd2) \
+    2.2 [**UnZero CMD - PMU - CMD**](#unzero-cmd---pmu---cmd) \
+    2.3 [**UnZero CMD - PMU - Mask info**](#unzero-cmd---pmu---mask-info)
 3. [**UnZero CMD - GIC**](#unzero-cmd---gic)
 4. [**UnZero CMD - SysCon**](#unzero-cmd---syscon)
 5. [**UnZero CMD - EL switch**](#unzero-cmd---el-switch)
@@ -183,16 +186,23 @@ For your implementation of **`clk`**, these fields may differ.
 **CMD numbers: 3**. Reserve reg: **`X10-X11`**
 
 ### UnZero CMD - PMU - CMD2
-**`[63:56][55:0]`** 
+**`[63:56][55:48][47:0]`** 
 
 **Field:**  
 `[63:56]` - **CMD**
+`[55:48]` - **Mode:**
+1. h0 - **Res0**
+2. h1 - **Configure domen power**
+3. h2 - **Configure pll domen power**
+4. h3 - **Configure wakeup event**
+5. h4 - **Configure wakeup interrupt event**
+6. h5 - **Get interrupt status event**
 
-### UnZero CMD - PMU - CMD
-**`[63:56][55:44][43][42:36][35:32][31:0]`**
+### UnZero CMD - PMU - Domen configure - CMD
+**`[63:56][55:48][47:36][35:32][31:0]`**
 
 **Field:** \
-`[55:44]` - **Mode filed:** 
+`[47:36]` - **Mode filed:** 
 1. h0 - **Res0**
 2. h1 - **Power down disable without bypass. Bypass extensions enable only if SoC support Q-Dynamic**
 3. h2 - **Power down enable without bypass. Bypass extensions enable only if SoC support Q-Dynamic**
@@ -201,12 +211,7 @@ For your implementation of **`clk`**, these fields may differ.
 6. h5 - **Only bus idle isolation enable**
 7. h6 - **Only bus idle isolation disable**
 
-`[43]` - **Mask extensions support:**
-1. b0 - **Unsupport**
-2. b1 - **Support. If support, need configure `X11`**
-
-`[42:36]` - **Res0** \
-`[35:32]` - **Count iteration. Max 4**
+`[35:32]` - **Count iteration. Max 4** \
 `[31:0]` - **HEX periphery code:**
 1. 0x00 - **Res0**
 2. 0x01 - **Perlip**
@@ -221,7 +226,7 @@ For your implementation of **`clk`**, these fields may differ.
 **HEX periphery code filed:** \
 `[31:24][23:16][15:8][7:0]`
 
-### UnZero CMD - PMU - Mask info
+### UnZero CMD - PMU - Domen configure - Mask info
 `[63:0]`
 
 **Field:** \

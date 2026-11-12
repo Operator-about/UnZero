@@ -105,6 +105,11 @@ void main(void){
     gic_icc_ctlr_conf(&cmd_gic);
     uprintf("[UnZero]GIC-500 on rk3399 in operation's\r\n");
 
+    pmu_pmu_pwrd_handle_rk3399(0x04, PWRDE);
+    if(PMU->PWRDN_ST & (1ULL << 29)){
+        uprintf("[UnZero]Shutdown GIC-500 success complete\r\n");
+    }
+
     uprintf("[UnZero]Jump to next boot stage\r\n");
 
     uint64_t cmd_el = 0x0;

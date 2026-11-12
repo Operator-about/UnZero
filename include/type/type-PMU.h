@@ -4,10 +4,11 @@
 #include<stdalign.h>
 
 typedef struct{
-    uint32_t RESERVE_1[5];
+    volatile uint32_t WAKER[5];
     volatile uint32_t PWRDN_CON;
     volatile uint32_t PWRDN_ST;
-    uint32_t RESERVE_2[17];
+    volatile uint32_t PWRD_PLL;
+    uint32_t RESERVE_2[16];
     volatile uint32_t BUS_IDLE_REQ;
     volatile uint32_t BUS_IDLE_ST;
     volatile uint32_t BUS_IDLE_ACK;

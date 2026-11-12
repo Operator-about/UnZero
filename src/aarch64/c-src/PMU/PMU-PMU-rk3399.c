@@ -5,37 +5,48 @@ pmu_pmu_rk3399_t* PMU;
 void pmu_pmu_handle_rk3399(uint64_t* cmd){
     pmu_mode_e mode;
     
-    for(int index = 0; index < ((*cmd >> 32) & 0xF); index++){
-        switch((*cmd >> (((index * 3) + 44)) & 0x7)){
-            // case 0x1:
-            //     pmu_pmu_pwrdn_d_rk3399(29U);
-            //     pmu_clk_gic_conf_rk3399();
-            //     pmu_pmu_bus_e_rk3399(27U);
-            //     break;
-            // case 0x2:
-            //     pmu_pmu_bus_e_rk3399(27U);
-            //     pmu_pmu_pwrdn_e_rk3399(29U);
-            //     break;
+    uint8_t iteration = (*cmd >> 32) & 0xF;
+    uint8_t mode_operation = 0x0;
+    for(int index = 0; index < iteration; index++){
+        mode_operation = (*cmd >> (((index * 3) + 36)) & 0x7);
+        switch(mode_operation){
+            case 1:
+                pmu_pmu_pwrd_handle_rk3399((*cmd >> ((index * 8))) & 0xFF, PWRDD);
+                break;
+            case 2:
+                pmu_pmu_pwrd_handle_rk3399((*cmd >> ((index * 8))) & 0xFF, PWRDE);
+                break;
+            case 5:
+                pmu_pmu_bus_handle_rk3399((*cmd >> ((index * 8))) & 0xFF, PWRDE);
+                break;
+            case 6:
+                pmu_pmu_bus_handle_rk3399((*cmd >> ((index * 8))) & 0xFF, PWRDD);
+                break;
         }
     }
 }
 
-void pmu_pmu_pwrdn_handle_rk3399(uint8_t hex_code, pmu_mode_e mode){
+void pmu_pmu_pwrd_handle_rk3399(uint8_t hex_code, pmu_mode_e mode){
     switch(hex_code){
         case 0x04:
-            
+            pmu_pmu_pwrd_seq_rk3399(29U, 27U, mode);
+            break;
     }
 }
 
 void pmu_pmu_bus_handle_rk3399(uint8_t hex_code, pmu_mode_e mode){
-
+    switch(hex_code){
+        case 0x04:
+            pmu_pmu_bus_rk3399(27U, mode);
+            break;
+    }
 }
 
 void pmu_clk_handle_rk3399(uint8_t hex_code, pmu_mode_e mode){
 
 }
 
-void pmu_pmu_pwrdn_rk3399(uint8_t pwrdn_bit, pmu_mode_e mode){
+void pmu_pmu_pwrd_rk3399(uint8_t pwrdn_bit, pmu_mode_e mode){
     PMU->PWRDN_CON &= ~(1U << pwrdn_bit);
     PMU->PWRDN_CON |= (mode << pwrdn_bit);
     switch(mode){
@@ -65,6 +76,19 @@ void pmu_pmu_bus_rk3399(uint8_t bus_bit, pmu_mode_e mode){
             while(PMU->BUS_IDLE_ST & (1U << bus_bit)){
                 __asm__("NOP");
             }
+            break;
+    }
+}
+
+void pmu_pmu_pwrd_seq_rk3399(uint8_t pwrdn_bit, uint8_t bus_bit, pmu_mode_e mode){
+    switch(mode){
+        case PWRDD:
+            pmu_pmu_pwrd_rk3399(pwrdn_bit, PWRDD);
+            pmu_pmu_bus_rk3399(bus_bit, PWRDD);
+            break;
+        case PWRDE:
+            pmu_pmu_bus_rk3399(bus_bit, PWRDE);
+            pmu_pmu_pwrd_rk3399(pwrdn_bit, PWRDE);
             break;
     }
 }
